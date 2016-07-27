@@ -1,0 +1,67 @@
+<template name="Ciena">
+	<div class="page-container container" id="content">
+		<div class="row" id="title_row">
+			<div class="col-md-12">
+				<h2 id="page_title" class="pull-left">
+					Ciena Provisioning
+				</h2>
+				<div id="page_menu" class="pull-right">
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-8">
+				<div class="media">
+					<div class="media-body">
+						{{#with domain}}
+						<h3 class="media-heading">Domain ID: {{id}}</h3>
+						<h4> {{description}}</h4>
+						<h5> domainType: {{domainType}}</h5>
+						<h5> operationMode: <span class="label label-primary label-{{#if statusIs "normal"}}success {{/if}}"><strong>{{operationMode}}</strong></span></h5>
+						{{/with}}
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<p id="page_text">
+			Welcome to the BP easy prov page
+		</p>
+		{{> CienaCienaDevices}}{{> CienaCienaServices}}
+	</div>
+</template>
+
+<template name="CienaCienaDevices">
+	<div class="jumbotron ">
+		<div id="content" class="container">
+			<h1 id="component-title">
+				Devices
+			</h1>
+			<p id="jumbotron-text">
+			</p>
+			<p id="jumbotron-button">
+				<a href="#" class="btn btn btn-primary btn-lg" role="button">
+					Continue &raquo;
+				</a>
+			</p>
+		</div>
+	</div>
+</template>
+
+<template name="CienaCienaServices">
+	<div class="jumbotron ">
+		<div id="content" class="container">
+			<h1 id="component-title">
+				Services
+			</h1>
+			<p id="jumbotron-text">
+			</p>
+			<p id="jumbotron-button">
+				<a href="#" class="btn btn btn-primary btn-lg" role="button">
+					Continue &raquo;
+				</a>
+			</p>
+		</div>
+	</div>
+</template>
+
