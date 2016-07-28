@@ -1,5 +1,5 @@
 Template.Huawei.rendered = function() {
-	debugger
+	
 };
 
 Template.Huawei.events({
@@ -16,7 +16,7 @@ Template.Huawei.helpers({
 });
 
 Template.Huawei.created = function () {
-  debugger
+	Session.set('domain', {});
 	Meteor.call("mdso_getDomain", "EAN", function (error, result) {
     if (result) {
       Session.set('domain', result);

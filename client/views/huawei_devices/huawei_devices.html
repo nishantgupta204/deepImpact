@@ -3,10 +3,43 @@
 		<div class="row" id="title_row">
 			<div class="col-md-12">
 				<h2 id="page_title" class="pull-left">
-					Huawei Devices
+					Huawei Devices {{deviceProduct.id}}
 				</h2>
 				<div id="page_menu" class="pull-right">
 				</div>
+				
+				
+				  <div class="container-fluid">
+                    <table class="table table-striped table-responsive table-hover">
+                      <caption>Market
+                      </caption>
+                      <tbody>
+
+                        {{#each devices}}
+                          <tr class="clickable-row service-row">
+                            <td class="col-sm-8 col-md-6">
+                              <div class="media-body">
+                                <h4 class="media-heading">ID: {{id}}</h4>
+                                <h3 class="media-heading">Type: {{properties.type}}</h3>
+                                <br>
+                                <span class="media-heading"> communicationState:  </span><span class="label label-info">{{properties.communicationState}} </span>
+                                <span class="media-heading"> serialNumber:  </span><span class="label label-info">{{properties.serialNumber}} </span>
+                                <span class="media-heading"> deviceVersion:  </span><span class="label label-info">{{properties.deviceVersion}} </span>
+                                <span class="media-heading"> hostname:  </span><span class="label label-info"> {{properties.connection.hostname}} </span>
+                                <br>
+                              </div>
+                            </td>
+                          </tr>
+                        {{/each}}
+                      </tbody>
+                    </table>
+                  </div>
+				
+				
+				
+				
+				
+				
 			</div>
 		</div>
 	</div>
