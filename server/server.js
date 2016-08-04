@@ -16,10 +16,10 @@ Meteor.methods({
 
 	'mdso_getDomain': function (domain) {
 		console.log("Getting info for MDSO Domain: " + domain);
-
+		var path = "/bpocore/market/api/v1/domains?q=domainType:urn:ciena:bp:domain:" + domain
 		var appSettings = AppSettings.findOne();
-		var authToken = mdso_getAuthToken(appSettings);
-		var url = appSettings.MDSO_server + "/bpocore/market/api/v1/domains?q=domainType:urn:ciena:bp:domain:" + domain
+		var authToken = mdso_getHash("GET", path);
+		var url = appSettings.MDSO_server + path
 		console.log("url: " + url);
 		console.log("Authorization: " + authToken);
 		try {
@@ -35,15 +35,16 @@ Meteor.methods({
 			console.log("MDSO Domain " + domain + " has id: " + did);
 			return content.items[0];
 		} catch (e) {
-			console.log("Error getting id for MDSO Product: " + productName + " error: " + e);
-			throw new Meteor.Error("Error getting id for MDSO Product: " + productName + " error: " + e);
+			console.log("Error getting id for MDSO domain: " + domain + " error: " + e);
+			throw new Meteor.Error("Error getting id for MDSO domain: " + domain + " error: " + e);
 		}
 	},
 	'mdso_getProductDeviceID': function(domain){
 	    console.log("Getting DeviceID for MDSO Domain:" + domain);
+		var path = "/bpocore/market/api/v1/products?includeInactive=false&q=resourceTypeId:" + domain + ".resourceTypes.Device"
 		var appSettings = AppSettings.findOne();
-		var authToken = mdso_getAuthToken(appSettings);
-		var url = appSettings.MDSO_server + "/bpocore/market/api/v1/products?includeInactive=false&q=resourceTypeId:" + domain + ".resourceTypes.Device"
+		var authToken = mdso_getHash("GET", path);
+		var url = appSettings.MDSO_server + path
 		console.log("url: " + url);
 		console.log("Authorization: " + authToken);
 		try {
@@ -66,9 +67,10 @@ Meteor.methods({
 	
 	'mdso_getDevices': function(deviceID){
 	    console.log("Getting devices for deviceID:" + deviceID);
+		var path = "/bpocore/market/api/v1/resources?productId=" + deviceID
 		var appSettings = AppSettings.findOne();
-		var authToken = mdso_getAuthToken(appSettings);
-		var url = appSettings.MDSO_server + "/bpocore/market/api/v1/resources?productId=" + deviceID
+		var authToken = mdso_getHash("GET", path);
+		var url = appSettings.MDSO_server + path
 		console.log("url: " + url);
 		console.log("Authorization: " + authToken);
 		try {
@@ -80,8 +82,8 @@ Meteor.methods({
 
 			console.log(JSON.stringify(response, null, 2));
 			var content = JSON.parse(response.content);
-			var did = content.items.count;
-			console.log("Resource Device " + deviceID + " has " + did + "devices");
+			var did = content.items.length;
+			console.log("Resource Device " + deviceID + " has " + did + " devices");
 			return content.items;
 		} catch (e) {
 			console.log("Error getting mdso_getDevices: " + deviceID + " error: " + e);
