@@ -11,7 +11,7 @@
                     <table class="table table-striped table-responsive table-hover">
                       <tbody>
                         {{#each devices}}
-                          <tr class="clickable-row service-row">
+                          <tr class="service-row">
                             <td class="col-sm-8 col-md-6">
                               <div class="media-body">
                                 <h4 class="media-heading">hostname: {{properties.connection.hostname}}</h4>
@@ -24,10 +24,39 @@
                         {{/each}}
                       </tbody>
                     </table>
-                    <button type="button" class="btn btn-success">Add</button>
+                    <button type="button" class="btn btn-success device-add">Add</button>
                   </div>
 			</div>
 		</div>
 	</div>
+	{{> deviceModal}}
 </template>
 
+<template name="deviceModal">
+  <div class="modal fade" id="deviceModal">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h4 class="modal-title">Device Add</h4>
+        </div>
+
+        <div class="modal-body">
+          <label for="type">Device Type</label>
+            <select class="form-control" id="type">
+                <option>ATN950B</option>
+                <option>PTN6900</option>
+            </select>
+          <label for="hostname">Hostname</label>
+          <input type="text" id="hostname"/>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary add-device" id="save">Save</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</template>

@@ -13,7 +13,61 @@ Meteor.methods({
 
 		Email.send(options);
 	},
+	'mdso_addDevice' :function(type,hostname){
+		console.log("Creating Huawei device type " + type + " hostname " + hostname);
+		
+		// Items necessary for POST execution TODO: Move this to the onRender of the page and set a session variable
+		var tenantID =  Meteor.call("mdso_getDomain", "EAN");
+		tenantID = tenantID.id
+		console.log("Successfully retrieved tenantID:" + tenantID);
+		
+		var productDeviceId = Meteor.call("mdso_getProductDeviceID","rahuawei");
+		productDeviceId = productDeviceId.id
+		console.log("Successfully retrieved productDeviceId:" + productDeviceId);
 
+		var path = "/bpocore/market/api/v1/resources"
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("POST", path);
+		var url = appSettings.MDSO_server + path
+		console.log("url: " + url);
+		console.log("Authorization: " + authToken);
+
+		var body = {"label":hostname,"productId":productDeviceId,"tenantId":tenantID,"properties":{"typeGroup":"/typeGroups/Huawei","resourceType":"/resourceTypes/"+type,"authentication":{"cli":{"username":"devops","password":"freelunch"}},"connection":{"hostname":hostname,"cli":{"hostport":22}}},"providerResourceId":"","discovered":false,"orchState":"unkown","reason":"","autoClean":true}
+		try {
+			var response = HTTP.call('POST', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false },
+					data : body
+				});
+			console.log("Created device " + hostname);
+			return {"created":"true"}
+		} catch (e) {
+			console.log("Error creating device id for MDSO domain: " + hostname + " error: " + e);
+			throw new Meteor.Error("Error creating device id for MDSO domain: " + hostname + " error: " + e);
+		}
+	},
+    'mdso_deleteDevice':function (id) {
+		console.log("Deleting device with ID: " + id);
+		var path = "/bpocore/market/api/v1/resources/" + id
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("DELETE", path);
+		var url = appSettings.MDSO_server + path
+		console.log("url: " + url);
+		console.log("Authorization: " + authToken);
+		try {
+			var response = HTTP.call('DELETE', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false }
+				});
+			console.log("Deleted Device " + id);
+			return {"deleted":"true"}
+		} catch (e) {
+			console.log("Error getting id for MDSO domain: " + domain + " error: " + e);
+			throw new Meteor.Error("Error getting id for MDSO domain: " + domain + " error: " + e);
+		}
+    },
 	'mdso_getDomain': function (domain) {
 		console.log("Getting info for MDSO Domain: " + domain);
 		var path = "/bpocore/market/api/v1/domains?q=domainType:urn:ciena:bp:domain:" + domain
@@ -47,6 +101,7 @@ Meteor.methods({
 		var url = appSettings.MDSO_server + path
 		console.log("url: " + url);
 		console.log("Authorization: " + authToken);
+
 		try {
 			var response = HTTP.call('GET', url,
 				{
@@ -95,41 +150,5 @@ Meteor.methods({
 	},
 	'mdso_getTenantId': function(){
 	    console.log("Getting DeviceID for MDSO Domain: " );
-	},
-	
-	'mdso_createEANDevice': function() {
-	    var data = JSON.stringify({
-      "label": "ATN",
-      "productId": "5796f274-23c2-410e-abc1-a716b39e5803",
-      "tenantId": "5796f274-81f1-49e9-a9a5-638a0c9bf773",
-      "properties": {
-        "typeGroup": "/typeGroups/Huawei",
-        "resourceType": "/resourceTypes/ATN950B",
-        "authentication": {
-          "cli": {
-            "username": "devops",
-            "password": "freelunch"
-          }
-        },
-        "connection": {
-          "hostname": "192.168.162.82",
-          "cli": {
-            "hostport": 22
-          }
-        }
-      },
-      "providerResourceId": "",
-      "discovered": false,
-      "orchState": "unkown",
-      "reason": "",
-      "autoClean": true
-    });
-    
-
 	}
-	
-	
-	
-
-
 });
