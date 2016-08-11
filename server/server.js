@@ -93,9 +93,9 @@ Meteor.methods({
 			throw new Meteor.Error("Error getting id for MDSO domain: " + domain + " error: " + e);
 		}
 	},
-	'mdso_getProductDeviceID': function(domain){
-	    console.log("Getting DeviceID for MDSO Domain:" + domain);
-		var path = "/bpocore/market/api/v1/products?includeInactive=false&q=resourceTypeId:" + domain + ".resourceTypes.Device"
+	'mdso_getProductID': function(product){
+	    console.log("Getting DeviceID for MDSO Domain:" + product);
+		var path = "/bpocore/market/api/v1/products?includeInactive=false&q=resourceTypeId:" + product
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
@@ -112,7 +112,7 @@ Meteor.methods({
 			console.log(JSON.stringify(response, null, 2));
 			var content = JSON.parse(response.content);
 			var did = content.items[0].id;
-			console.log("MDSO Domain " + domain + " has device product id: " + did);
+			console.log("MDSO Domain " + product + " has device product id: " + did);
 			return content.items[0];
 		} catch (e) {
 			console.log("Error getting id for MDSO Product: " + productName + " error: " + e);
@@ -120,9 +120,9 @@ Meteor.methods({
 		}
 	},
 	
-	'mdso_getDevices': function(deviceID){
-	    console.log("Getting devices for deviceID:" + deviceID);
-		var path = "/bpocore/market/api/v1/resources?productId=" + deviceID
+	'mdso_getProducts': function(product){
+	    console.log("Getting products for product:" + product);
+		var path = "/bpocore/market/api/v1/resources?productId=" + product
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
@@ -138,11 +138,11 @@ Meteor.methods({
 			console.log(JSON.stringify(response, null, 2));
 			var content = JSON.parse(response.content);
 			var did = content.items.length;
-			console.log("Resource Device " + deviceID + " has " + did + " devices");
+			console.log("Resource " + product + " has " + did + " products");
 			return content.items;
 		} catch (e) {
-			console.log("Error getting mdso_getDevices: " + deviceID + " error: " + e);
-			throw new Meteor.Error("Error getting mdso_getDevices: " + deviceID + " error: " + e);
+			console.log("Error getting mdso_getProducts: " + product + " error: " + e);
+			throw new Meteor.Error("Error getting mdso_getProducts: " + product + " error: " + e);
 		}
 	},
 	'mdso_getProductId': function(){
