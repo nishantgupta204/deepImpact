@@ -1,0 +1,43 @@
+<template name="HuaweiServiceDetail">
+	<div class="page-container container" id="content">
+		<div class="row" id="title_row">
+			<div class="col-md-12">
+				<h2 id="page_title" class="pull-left">
+					Huawei Service {{serviceID.id}}
+				</h2>
+				<div id="page_menu" class="pull-right">
+				</div>
+				  <div class="container-fluid">
+                    <table class="table table-striped table-responsive table-hover">
+                      <tbody>
+                        {{#each service}}
+                          <tr class="service-row">
+                            <td class="col-sm-8 col-md-6">
+                              <div class="media-body">
+                                <h4 class="media-heading">Device: {{properties.device}}</h4>
+                                <h4 class="media-heading">INNIs</h4>
+                                 {{#each properties.innis}}
+                                 
+                                <h5 class="media-heading"> <span class="media-heading"> port:  </span><span class="label label-primary">{{id}} </span></h5>
+                                <ul>
+                                <li><span class="media-heading"> stag:  </span><span class="label label-success">{{stag}} </span></li>
+                                <li><span class="media-heading"> cir:  </span><span class="label label-primary">{{cir}} Mbps </span></li>
+                                <li><span class="media-heading"> profile:  </span><span class="label label-primary">{{profile}} </span></li>
+                                </ul>
+                                {{/each}}
+                                <h4 class="media-heading">Peers</h4>
+                                {{#each properties.peers}}
+                                <h5 class="media-heading">peer:<span class="label label-primary">{{this}} </span></h5>
+                                {{/each}}
+                              </div>
+                            </td>
+                          </tr>
+                        {{/each}}
+                      </tbody>
+                    </table>
+                  </div>
+			</div>
+		</div>
+	</div>
+</template>
+

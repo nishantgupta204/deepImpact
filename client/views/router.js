@@ -13,6 +13,7 @@ var freeRoutes = [
 	"huawei_devices",
 	"huawei_device",
 	"huawei_services",
+	"huawei_service_detail",
 	"ciena_devices",
 	"ciena_device",
 	"ciena_services"
@@ -37,6 +38,7 @@ Router.map(function () {
 	this.route("huawei_devices", {path: "/huawei_devices", controller: "HuaweiDevicesController"});
 	this.route("huawei_device", {path: "/huawei_device/:id", controller: "HuaweiDeviceController"});
 	this.route("huawei_services", {path: "/huawei_services", controller: "HuaweiServicesController"});
+	this.route("huawei_service_detail", {path: "/huawei_service_detail/:id", controller: "HuaweiServiceDetailController"});
 	this.route("ciena_devices", {path: "/ciena_devices", controller: "CienaDevicesController"});
 	this.route("ciena_device", {path: "/ciena_device/:id", controller: "CienaDeviceController"});
 	this.route("ciena_services", {path: "/ciena_services", controller: "CienaServicesController"});
