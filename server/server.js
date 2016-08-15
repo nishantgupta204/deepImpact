@@ -13,6 +13,41 @@ Meteor.methods({
 
 		Email.send(options);
 	},
+    'mdso_removeEndpoint': function(service){
+        var path = "/bpocore/market/api/v1/resources/" + service.id
+        var appSettings = AppSettings.findOne();
+        var url = appSettings.MDSO_server + path
+        if (service.discovered) {
+            console.log("Patching service ID: " + service.id);
+    		var authToken = mdso_getHash("PATCH", path);
+            try {
+                var body = {"discovered":false}		
+    			var response = HTTP.call('PATCH', url,
+    				{
+    					headers: { "Content-Type": "application/json", "Authorization": authToken },
+    					npmRequestOptions: { rejectUnauthorized: false },
+    					data: body
+    				});
+    			console.log("Patched Service:" + service.id + " to discovered:false");
+    		} catch (e) {
+    			console.log("Error getting id for MDSO domain: " + domain + " error: " + e);
+    			throw new Meteor.Error("Error getting id for MDSO domain: " + domain + " error: " + e);
+    		}
+        }
+        try {
+            console.log("Removing service ID: " + service.id);
+            authToken = mdso_getHash("DELETE", path);
+			var response = HTTP.call('DELETE', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false }
+				});
+			console.log("Deleted Service:" + service.id);
+		} catch (e) {
+			console.log("Error deleting service id : " + service.id + " error: " + e);
+			throw new Meteor.Error("Error deleting service id:" + service.id + " error: " + e);
+		}
+    },
 	'mdso_addDevice' :function(type,hostname){
 		console.log("Creating Huawei device type " + type + " hostname " + hostname);
 		

@@ -3,7 +3,18 @@ Template.HuaweiServiceDetail.rendered = function() {
 };
 
 Template.HuaweiServiceDetail.events({
-
+    'click .service-delete':function(event, template) {
+        alert(JSON.stringify(this))
+        $('#serviceDeleteConfirmModal').modal('show');
+    },
+    'click .endpoint-remove':function(event, template) {
+        alert(JSON.stringify(this))
+    	Meteor.call("mdso_removeEndpoint", this, function (error, result) {
+        if (result) {
+          alert(JSON.stringify(result))
+        }
+      });
+    }
 });
 
 Template.HuaweiServiceDetail.helpers({
@@ -12,7 +23,10 @@ Template.HuaweiServiceDetail.helpers({
   },
      'service': function() {
     return Session.get("service");
-  }
+  },
+    orchStateIs: function(orchState){
+    return this.orchState === orchState;
+  },
 });
 
 Template.HuaweiServiceDetail.created = function () {
@@ -22,3 +36,25 @@ Template.HuaweiServiceDetail.created = function () {
     }
   });
 };
+
+Template.serviceDeleteConfirmModal.events({
+  'click .__cancel': function(e, t) {
+    Modal.hide();
+  },
+
+  'click .__delete': function(e, t) {
+    var self = this;
+    Meteor.call('cart.removeLineItem', {
+      cartId: self.product.parent._id,
+      lineItemId: self.product._id,
+    }, function(err){
+      Modal.hide();
+      if(!err){
+        toastr.success('Item removed.', 'Success');
+        analytics.track('Deleted a cart line item');
+      } else {
+        toastr.error(err.message, 'Error removing item');
+      }
+    });
+  },
+});

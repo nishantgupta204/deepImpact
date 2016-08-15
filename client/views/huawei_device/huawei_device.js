@@ -10,7 +10,6 @@ Template.HuaweiDevice.events({
           Router.go('huawei_devices');
         }
       });
-        
     }
 });
 
