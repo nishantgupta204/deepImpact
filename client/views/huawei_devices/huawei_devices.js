@@ -23,16 +23,13 @@ Template.HuaweiDevices.helpers({
 });
 
 Template.HuaweiDevices.created = function () {
-	Meteor.call("mdso_getProductID", "rahuawei.resourceTypes.Device", function (error, result) {
-    if (result) {
-      Session.set('deviceProduct', result);
-      Meteor.call("mdso_getProducts", result.id, function (error, result2) {
-        if (result2) {
-          Session.set('devices', result2);
+    Meteor.call("mdso_getDevices", "rahuawei.resourceTypes.Device", function (error, result){
+        if (result){
+            Session.set('devices', result)
         }
-      });
-    }
-  });
+        
+    });
+
 };
 
 Template.deviceModal.events({

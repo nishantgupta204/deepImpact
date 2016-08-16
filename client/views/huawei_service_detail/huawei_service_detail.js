@@ -8,11 +8,8 @@ Template.HuaweiServiceDetail.events({
         $('#serviceDeleteConfirmModal').modal('show');
     },
     'click .endpoint-remove':function(event, template) {
-        alert(JSON.stringify(this))
     	Meteor.call("mdso_removeEndpoint", this, function (error, result) {
-        if (result) {
-          alert(JSON.stringify(result))
-        }
+    	   Router.go('huawei_services');
       });
     }
 });

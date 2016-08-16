@@ -9,7 +9,13 @@ Template.HuaweiServices.events({
     },
   'click .service-add': function(e) {
     e.preventDefault();
-    $('#serviceModal').modal('show');
+    Meteor.call("mdso_getDevices", "rahuawei.resourceTypes.Device", function (error, result){
+        if (result){
+            Session.set('deviceList', result)
+            $('#serviceModal').modal('show');
+        }
+    });
+    
   }
 });
 
@@ -19,7 +25,10 @@ Template.HuaweiServices.helpers({
   },
     'services': function() {
     return Session.get("services");
-  }
+  },
+    'deviceList': function(){
+     return Session.get("deviceList");
+   } 
 });
 
 Template.HuaweiServices.created = function () {
@@ -34,3 +43,22 @@ Template.HuaweiServices.created = function () {
     }
   });
 };
+
+Template.serviceModal.helpers({
+   'deviceList': function(){
+     return Session.get("deviceList");
+   }
+});
+
+Template.serviceModal.events({
+    'change #deviceSelect' : function(event){
+        function findDevice(device) { 
+            var dev = $("#deviceSelect").val()
+            return device.properties.swType === dev;
+        }
+        var device = Session.get("deviceList")
+        var myDevice = device.find(findDevice)
+        console.log(JSON.stringify(myDevice))
+      }
+      
+});

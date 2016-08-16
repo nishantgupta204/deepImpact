@@ -13,6 +13,11 @@ Meteor.methods({
 
 		Email.send(options);
 	},
+	'mdso_getDevices': function(device){
+    	var result = Meteor.call("mdso_getProductID", device)
+    	var devices = Meteor.call("mdso_getProducts", result.id)
+    	return devices
+	},
     'mdso_removeEndpoint': function(service){
         var path = "/bpocore/market/api/v1/resources/" + service.id
         var appSettings = AppSettings.findOne();
@@ -204,15 +209,17 @@ Meteor.methods({
 				{
 					headers: { "Content-Type": "application/json", "Authorization": authToken },
 					npmRequestOptions: { rejectUnauthorized: false }
-				});
+			});
 			var services = [];
 			var content = JSON.parse(response.content);
 			content = content.items
 			console.log("content: " + JSON.stringify(content));
             content.forEach(function(item){
-                if (services.indexOf(item.label) == -1) {
-                    services.push({"id":item.label});
-                }
+                var searchID = {"id":item.label}
+                var index = services.findIndex(services => services.id==item.label)   
+                if (index === -1){
+                    services.push(searchID);
+                }                
             });
 			console.log(JSON.stringify(response, null, 2));
 			console.log("services:" + JSON.stringify(services, null, 2));
