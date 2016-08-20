@@ -58,7 +58,35 @@ Template.serviceModal.events({
         }
         var device = Session.get("deviceList")
         var myDevice = device.find(findDevice)
-        console.log(JSON.stringify(myDevice))
-      }
+        Session.set('device', myDevice);
+
+      },
+    'click .add-service': function(event, template) {
+        event.preventDefault();
+        var service = {};
+        service.properties = {}
+        service.properties.id = $('#id').val()
+        service.properties.peers = ["1.1.1.1"]
+        service.properties.innis = []
+        service.properties.vsiId = $('#id').val()
+        inni = {}
+        inni.id = "0/1/0"
+        inni.stag = parseInt($('#stag').val())
+        inni.cir = parseInt($('#cir').val())
+        service.properties.innis.push(inni);
+        service.label = $('#id').val()
+        service.properties.device = Session.get("device").id
+        service.productId = Session.get("xvcProduct").id
+        Meteor.call("mdso_addServiceHuawei", service, function(error, result) {
+            console.log("adding service type:" + service)
+            console.log(result)
+            if (result) {
+                alert(JSON.stringify(result));
+//                Router.go('huawei_services/' + $('#id').val());
+            }
+        });
+        
+        $('#serviceModal').modal('hide');
+    }
       
 });

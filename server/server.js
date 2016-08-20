@@ -53,6 +53,40 @@ Meteor.methods({
 			throw new Meteor.Error("Error deleting service id:" + service.id + " error: " + e);
 		}
     },
+    'mdso_addServiceHuawei' :function(service){
+		var tenantID =  Meteor.call("mdso_getDomain", "EAN");
+		tenantID = tenantID.id
+		console.log("Successfully retrieved tenantID:" + tenantID);
+		service.tenantId = tenantID
+		service.orchState = "active"
+		service.autoClean = true
+		service.discovered = false
+		console.log("service: " + JSON.stringify(service))
+		var path = "/bpocore/market/api/v1/resources"
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("POST", path);
+		var url = appSettings.MDSO_server + path
+		console.log("url: " + url);
+		console.log("Authorization: " + authToken);
+
+		var body = service
+		try {
+		    console.log("Creating service object: " + JSON.stringify(body))
+			var response = HTTP.call('POST', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken , "Accept": "application/json, text/javascript, */*; q=0.01" },
+					npmRequestOptions: { rejectUnauthorized: false },
+					data : body
+				});
+			console.log("Created service " + service.label);
+			return response
+		} catch (e) {
+			console.log("Error creating service " + service.label + " error: " + e);
+			throw new Meteor.Error("Error creating service " + service.label + " error: " + e);
+		}
+		
+		return service
+    },
 	'mdso_addDevice' :function(type,hostname){
 		console.log("Creating Huawei device type " + type + " hostname " + hostname);
 		
@@ -61,7 +95,7 @@ Meteor.methods({
 		tenantID = tenantID.id
 		console.log("Successfully retrieved tenantID:" + tenantID);
 		
-		var productDeviceId = Meteor.call("mdso_getProductDeviceID","rahuawei");
+		var productDeviceId = Meteor.call("mdso_getProductID","rahuawei.resourceTypes.Device");
 		productDeviceId = productDeviceId.id
 		console.log("Successfully retrieved productDeviceId:" + productDeviceId);
 

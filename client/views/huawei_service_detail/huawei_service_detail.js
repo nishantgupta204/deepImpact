@@ -1,5 +1,5 @@
 Template.HuaweiServiceDetail.rendered = function() {
-//	Session.set('serviceID', {});
+
 };
 
 Template.HuaweiServiceDetail.events({
@@ -27,6 +27,10 @@ Template.HuaweiServiceDetail.helpers({
 });
 
 Template.HuaweiServiceDetail.created = function () {
+    var str = Iron.Location.get().path;
+    var n = str.lastIndexOf('/');
+    var sid = str.substring(n + 1);
+    Session.set('serviceID',{"id":sid})
 	Meteor.call("mdso_getServiceID", Session.get("serviceID").id,"rahuawei.resourceTypes.XvcFragment", function (error, result) {
     if (result) {
       Session.set('service', result);
