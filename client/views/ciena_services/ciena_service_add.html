@@ -1,0 +1,96 @@
+<template name="CienaServiceAdd">
+  <div class="container-fluid">
+    <div clas="row pull-left" style="padding-top:25px;padding-bottom:15px;">
+      <a type="button" href="/ciena_services" class="btn btn-info"><span class="glyphicon glyphicon-menu-left" aria-hidden="true" style="padding-right:5px;"></span>Services</a>
+    </div>
+    <div class="panel panel-info">
+      <div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
+        Create a New Service
+        <button id="saveButton" form="createServiceForm" type="submit" class="btn btn-sm btn-primary pull-right"><span class="glyphicon glyphicon-save"> Save</span></button>
+        <button id="workingButton" style="display:none;" class="btn btn-sm btn-warning pull-right"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate "></span> Working...</button>
+      </div>
+      <div class="panel-body">
+        <form id="createServiceForm" role="form" data-toggle="validator">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="form-group">
+                <label for="serviceName" class="text-primary control-label">Service Name</label>
+                <input name="serviceName" id="serviceName" required pattern=".{4,}" class="form-control input-sm" {{enableOrDisable}} value="{{name}}">
+                <div class="help-block with-errors"></div>
+              </div>
+              <div {{hidden}} class="form-group">
+                <label for="createdOn" class="text-primary">Created On</label>
+                <input name="createdOn" id="createdOn" pattern=".{4,}" class="form-control input-sm" {{enableOrDisable}} value="{{createdOn}}">
+              </div>
+              <div class="form-group">
+                <label for="serviceType" class="text-primary">Service Type</label>
+                <select id="serviceType" class="form-control input-sm" {{enableOrDisable}}>
+                  {{#each serviceTypeOptions}}
+                    <option value="{{value}}" {{selected}}>{{label}}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-6">
+              <div class="form-group">
+                <label for="nodeAHostName" class="text-primary">NodeA UNI Host</label>
+                <select id="nodeAHostName" class="form-control input-sm" {{enableOrDisable}}>
+                  {{#each aNodeHostNameOptions}}
+                  <option value="{{value}}" {{selected}}>{{label}}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+            <div class="col-xs-6">
+              <div class="form-group">
+                <label for="nodeAPort" class="text-primary">NodeA UNI Port</label>
+                <select id="nodeAPort" class="form-control input-sm" {{enableOrDisable}}></select>
+              </div>
+            </div>
+            <div class="col-xs-6">
+              <div class="form-group">
+                <label id="nodeZHostNameLabel" for="nodeZHostName" class="text-primary">NodeZ UNI Host</label>
+                <select id="nodeZHostName" class="form-control input-sm" {{enableOrDisable}}>
+                  {{#each zNodeHostNameOptions}}
+                  <option value="{{value}}" {{selected}}>{{label}}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+            <div class="col-xs-6">
+              <div class="form-group">
+                <label id="nodeZPortLabel" for="nodeZPort" class="text-primary">NodeZ UNI Port</label>
+                <select id="nodeZPort" class="form-control input-sm" {{enableOrDisable}}></select>
+              </div>
+            </div>
+            <div class="col-xs-4">
+              <div class="form-group">
+                <label for="speed" class="text-primary control-label">Speed<sup>(M)</sup></label>
+                <input name="speed" id="speed" required class="form-control input-sm" type="number" {{enableOrDisable}} value="{{speed}}">
+                <div class="help-block with-errors"></div>
+            </div>
+            </div>
+            <div class="col-xs-4">
+              <div class="form-group">
+                <label for="vlan" class="text-primary control-label">VLan</label>
+                <input name="vlan" id="vlan" required  class="form-control input-sm" type="number" {{enableOrDisable}} value="{{vlan}}">
+                <div class="help-block with-errors"></div>
+              </div>
+            </div>
+            <div id="cvlanDiv" class="col-xs-4" {{hiddenCvlan}}>
+              <div class="form-group">
+                <label for="cvlan" class="text-primary control-label">CVlan</label>
+                <input name="cvlan" id="cvlan" {{requiredCvlan}} class="form-control input-sm" type="number" {{enableOrDisable}} value="{{cvlan}}">
+                <div class="help-block with-errors"></div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+</template>
