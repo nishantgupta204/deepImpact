@@ -8,11 +8,6 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
-	'sendMail': function (options) {
-		this.unblock();
-
-		Email.send(options);
-	},
 	'mdso_getDevices': function(device){
     	var result = Meteor.call("mdso_getProductID", device)
     	var devices = Meteor.call("mdso_getProducts", result.id)
@@ -84,8 +79,6 @@ Meteor.methods({
 			console.log("Error creating service " + service.label + " error: " + e);
 			throw new Meteor.Error("Error creating service " + service.label + " error: " + e);
 		}
-
-		return service
     },
 	'mdso_addDevice' :function(type,hostname){
 		console.log("Creating Huawei device type " + type + " hostname " + hostname);
@@ -266,7 +259,7 @@ Meteor.methods({
 		}
 	},
 
-	'mdso_getProducts': function(name){
+	'mdso_getProductsByName': function(name){
 			var result = Meteor.call("mdso_getProductID", name)
 			var products = Meteor.call("mdso_getProducts", result.id)
 			return products;
