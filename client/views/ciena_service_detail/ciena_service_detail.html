@@ -19,10 +19,10 @@
                           <tr class="service-row">
                             <td class="col-sm-8 col-md-6">
                               <div class="media-body">
-                                <h4 class="media-heading">Service ID: {{id}}</h4>
-                                <h4 class="media-heading">Device: {{properties.device}}</h4>
+                                <h4 class="media-heading">Service ID: {{id}} Service ID: {{properties.id}}</h4>
+                                <h4 class="media-heading">Device: {{details.label}}  ID: {{properties.device}}</h4>
                                 <h4 class="media-heading">INNIs</h4>
-                                {{#each properties.innis}}
+                                {{#each properties.nnis}}
                                 <h5 class="media-heading"> <span class="media-heading"> port:  </span><span class="label label-primary">{{id}} </span></h5>
                                 <ul>
                                 {{#if stag}}<li><span class="media-heading"> stag:  </span><span class="label label-success">{{stag}} </span></li>{{/if}}
@@ -30,9 +30,9 @@
                                 <li><span class="media-heading"> profile: {{profile}} </span></li>
                                 </ul>
                                 {{/each}}
-                                <h4 class="media-heading">Peers</h4>
-                                {{#each properties.peers}}
-                                <h5 class="media-heading">peer:<span class="label label-primary">{{this}} </span></h5>
+                                <h4 class="media-heading">UNIs</h4>
+                                {{#each properties.unis}}
+                                <h5 class="media-heading">uni port:<span class="label label-primary">{{properties.id}} </span></h5>
                                 {{/each}}
                               </div>
                             </td>

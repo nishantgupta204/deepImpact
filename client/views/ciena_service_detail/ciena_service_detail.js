@@ -36,12 +36,13 @@ Template.CienaServiceDetail.created = function () {
 	  Meteor.call("mdso_getProductsByLabel", sid, "raciena6x.resourceTypes.XvcFragment", function (error, result) {
     if (result) {
       service = result;
-      service.details = [];
 
       $.each(result, function(index, item) {
+        console.log("index:" + index)
         Meteor.call("mdso_getResourceById", item.properties.device, function (error, result2) {
           if (result2) {
-            service.details.push(result2);
+            // service.details.push(result2);
+            service[index].details = result2;
           }
         });
       });
