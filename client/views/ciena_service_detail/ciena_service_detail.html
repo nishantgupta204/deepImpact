@@ -19,20 +19,26 @@
                           <tr class="service-row">
                             <td class="col-sm-8 col-md-6">
                               <div class="media-body">
-                                <h4 class="media-heading">Service ID: {{id}} Service ID: {{properties.id}}</h4>
-                                <h4 class="media-heading">Device: {{details.label}}  ID: {{properties.device}}</h4>
+                                <h4 class="media-heading">Service ID: {{id}} </h4>
+                                <h4 class="media-heading">Service Name: {{properties.id}}</h4>
+                                <h4 class="media-heading">ID: {{properties.device}}</h4>
+                                <h4 class="media-heading">Device: {{details.label}}</h4>
                                 <h4 class="media-heading">INNIs</h4>
                                 {{#each properties.nnis}}
                                 <h5 class="media-heading"> <span class="media-heading"> port:  </span><span class="label label-primary">{{id}} </span></h5>
                                 <ul>
                                 {{#if stag}}<li><span class="media-heading"> stag:  </span><span class="label label-success">{{stag}} </span></li>{{/if}}
-                                <li><span class="media-heading"> cir:  </span><span class="label label-primary">{{cir}} Mbps </span></li>
-                                <li><span class="media-heading"> profile: {{profile}} </span></li>
                                 </ul>
                                 {{/each}}
                                 <h4 class="media-heading">UNIs</h4>
                                 {{#each properties.unis}}
                                 <h5 class="media-heading">uni port:<span class="label label-primary">{{id}} </span></h5>
+                                <h5 class="media-heading">Class of Service Configurations:</h5>
+                                {{#each cosCfg}}
+                                <h5 class="media-heading">classOfServiceName:<span class="label label-primary">{{classOfServiceName}} </span></h5>
+                                <h5 class="media-heading">ingressCir:<span class="label label-primary">{{ingressCir}} Mbps</span></h5>
+                                {{/each}}
+                                
                                 {{/each}}
                               </div>
                             </td>
