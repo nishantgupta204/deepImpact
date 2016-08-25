@@ -38,16 +38,16 @@ Template.CienaServiceDetail.created = function () {
       service = result;
 
       $.each(result, function(index, item) {
-        console.log("index:" + index)
         Meteor.call("mdso_getResourceById", item.properties.device, function (error, result2) {
           if (result2) {
             // service.details.push(result2);
             service[index].details = result2;
+            service[index].hostname = result2.label;
           }
         });
       });
     }
-    Session.set('service', result);
+    Session.set('service', service);
     console.log("service: " + service);
     console.log(service);
 
