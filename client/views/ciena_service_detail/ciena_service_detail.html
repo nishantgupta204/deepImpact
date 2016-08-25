@@ -1,0 +1,90 @@
+<template name="CienaServiceDetail">
+	<div class="page-container container" id="content">
+		<div class="row" id="title_row">
+			<div class="col-md-12">
+				<h2 id="page_title" class="pull-left">
+					Ciena Service {{serviceID.id}}
+					<button type="button" class="btn btn-danger services-delete">Delete All</button>
+				</h2>
+				<br>
+				<h3 id="page_add" class="pull-right">
+					<button type="button" class="btn btn-success endpoint-add">Add Endpoint</button>
+				</h3>
+				<div id="page_menu" class="pull-right">
+				</div>
+				  <div class="container-fluid">
+                    <table class="table table-striped table-responsive">
+                      <tbody>
+                        {{#each service}}
+                          <tr class="service-row">
+                            <td class="col-sm-8 col-md-6">
+                              <div class="media-body">
+                                <h4 class="media-heading">Service ID: {{id}}</h4>
+                                <h4 class="media-heading">Device: {{properties.device}}</h4>
+                                <h4 class="media-heading">INNIs</h4>
+                                {{#each properties.innis}}
+                                <h5 class="media-heading"> <span class="media-heading"> port:  </span><span class="label label-primary">{{id}} </span></h5>
+                                <ul>
+                                {{#if stag}}<li><span class="media-heading"> stag:  </span><span class="label label-success">{{stag}} </span></li>{{/if}}
+                                <li><span class="media-heading"> cir:  </span><span class="label label-primary">{{cir}} Mbps </span></li>
+                                <li><span class="media-heading"> profile: {{profile}} </span></li>
+                                </ul>
+                                {{/each}}
+                                <h4 class="media-heading">Peers</h4>
+                                {{#each properties.peers}}
+                                <h5 class="media-heading">peer:<span class="label label-primary">{{this}} </span></h5>
+                                {{/each}}
+                              </div>
+                            </td>
+                            <td class="col-sm-8 col-md-6">
+                                <div class="media-body">
+                                    <h5 class="media-heading"> <span class="media-heading"> Created in BP: {{#unless discovered}}
+                                    <span class="label label-success">Yes </span>
+                                    {{else}}
+                                    <span class="label label-danger">No </span>
+                                    {{/unless}}
+                                    </span></h5>
+                                    <h5 class="media-heading"> <span class="media-heading"> Orch State:
+                                    {{#if orchStateIs "failed"}}
+                                    <span class="label label-danger">{{orchState}} </span>
+                                    {{else}}
+                                    <span class="label label-success">{{orchState}} </span>
+                                    {{/if}}
+                                    </span></h5>
+                                    {{#if orchStateIs "failed"}}
+                                    <h5 class="media-heading"> <span class="media-heading"> reason: {{reason}}</span></h5>
+                                    {{/if}}
+                                </div>
+                            </td>
+                            <td>
+                            <button type="button" class="btn btn-danger endpoint-remove">Remove</button>
+                            </td>
+                          </tr>
+                        {{/each}}
+                      </tbody>
+                    </table>
+                  </div>
+			</div>
+		</div>
+	</div>
+	{{> serviceDeleteConfirmModal}}
+</template>
+
+<template name="serviceDeleteConfirmModal">
+<div class="modal fade" id="serviceDeleteConfirmModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+            Delete <br/>
+          <p class="text-danger">"{{serviceID}}"</p>
+            
+        </div>
+        <div class="modal-footer">
+              <button class="__cancel btn btn-default">No</button>
+              <button class="__delete btn btn-danger">Yes</button>
+            </div>
+      </div>
+    </div>
+  </div>
+</template>
+
