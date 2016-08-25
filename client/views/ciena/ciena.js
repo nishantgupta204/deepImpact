@@ -17,7 +17,7 @@ Template.Ciena.helpers({
 
 Template.Ciena.created = function () {
     Session.set('domain', {});
-    Meteor.call("mdso_getDomain", "cienacpe", function (error, result) {
+    Meteor.call("mdso_getDomain", "Ciena6x", function (error, result) {
     if (result) {
       Session.set('domain', result);
     }

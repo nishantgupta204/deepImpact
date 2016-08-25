@@ -80,6 +80,40 @@ Meteor.methods({
 			throw new Meteor.Error("Error creating service " + service.label + " error: " + e);
 		}
     },
+	'mdso_addCienaDevice' :function(type,hostname){
+		console.log("Creating Ciena device type " + type + " hostname " + hostname);
+
+		// Items necessary for POST execution TODO: Move this to the onRender of the page and set a session variable
+		var tenantID =  Meteor.call("mdso_getDomain", "Ciena6x");
+		tenantID = tenantID.id
+		console.log("Successfully retrieved tenantID:" + tenantID);
+
+		var productDeviceId = Meteor.call("mdso_getProductID","raciena6x.resourceTypes.Device");
+		productDeviceId = productDeviceId.id
+		console.log("Successfully retrieved productDeviceId:" + productDeviceId);
+
+		var path = "/bpocore/market/api/v1/resources"
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("POST", path);
+		var url = appSettings.MDSO_server + path
+		console.log("url: " + url);
+		console.log("Authorization: " + authToken);
+
+		var body = {"label":hostname,"productId":productDeviceId,"tenantId":tenantID,"properties":{"typeGroup":"/typeGroups/Ciena6x","authentication":{"cli":{"username":"su","password":"wwp"}},"connection":{"hostname":hostname,"cli":{"hostport":22}}},"providerResourceId":"","discovered":false,"orchState":"unkown","reason":"","autoClean":true}
+		try {
+			var response = HTTP.call('POST', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false },
+					data : body
+				});
+			console.log("Created device " + hostname);
+			return {"created":"true"}
+		} catch (e) {
+			console.log("Error creating device id for MDSO domain: " + hostname + " error: " + e);
+			throw new Meteor.Error("Error creating device id for MDSO domain: " + hostname + " error: " + e);
+		}
+	},
 	'mdso_addDevice' :function(type,hostname){
 		console.log("Creating Huawei device type " + type + " hostname " + hostname);
 
