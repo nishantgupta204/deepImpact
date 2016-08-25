@@ -17,3 +17,9 @@ Template.CienaServices.events({
 Template.CienaServices.helpers({
 
 });
+
+Template.CienaServices.helpers({
+    'services': function() {
+    return Session.get("services");
+  }
+});
