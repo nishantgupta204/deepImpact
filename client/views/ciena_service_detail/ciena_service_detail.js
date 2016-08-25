@@ -30,11 +30,26 @@ Template.CienaServiceDetail.created = function () {
     var str = Iron.Location.get().path;
     var n = str.lastIndexOf('/');
     var sid = str.substring(n + 1);
-    Session.set('serviceID',{"id":sid})
-	Meteor.call("mdso_getServiceID", Session.get("serviceID").id,"raciena.resourceTypes.XvcFragment", function (error, result) {
+    var sid = this.data.params.id;
+    Session.set('serviceID',{"id":sid});
+    var service = new Object();
+	  Meteor.call("mdso_getProductsByLabel", sid, "raciena6x.resourceTypes.XvcFragment", function (error, result) {
     if (result) {
-      Session.set('service', result);
+      service = result;
+      service.details = [];
+
+      $.each(result, function(index, item) {
+        Meteor.call("mdso_getResourceById", item.properties.device, function (error, result2) {
+          if (result2) {
+            service.details.push(result2);
+          }
+        });
+      });
     }
+    Session.set('service', result);
+    console.log("service: " + service);
+    console.log(service);
+
   });
 };
 

@@ -246,12 +246,12 @@ Meteor.methods({
 		}
 	},
 
-	'mdso_getServiceID': function(service, product){
-	    console.log("Getting Service:" + service + " for product:" + product);
+	'mdso_getProductsByLabel': function(label, product){
+	    console.log("Getting Service:" + label + " for product:" + product);
 		var prodID =  Meteor.call("mdso_getProductID", product);
-		var productID = prodID.id + "&q=label:" + service
+		var productID = prodID.id + "&q=label:" + label
 		var products =  Meteor.call("mdso_getProducts", productID);
-		console.log("Services for service " + service + ":\n" + JSON.stringify(products, null, 2));
+		console.log("Products with label " + label + ":\n" + JSON.stringify(products, null, 2));
 
 		var did = products.length;
 		console.log("Resource " + product + " has " + did + " unique products");
@@ -298,4 +298,27 @@ Meteor.methods({
 			var products = Meteor.call("mdso_getProducts", result.id)
 			return products;
 	},
+
+	'mdso_getResourceById': function(id){
+		console.log("Getting Resource with id:" + id);
+		var path = "/bpocore/market/api/v1/resources/" + id;
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("GET", path);
+		var url = appSettings.MDSO_server + path
+		console.log("url: " + url);
+		console.log("Authorization: " + authToken);
+		try {
+			var response = HTTP.call('GET', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false }
+			});
+			return JSON.parse(response.content);
+		} catch (e) {
+			console.log("Error getting resource with id: " + id);
+			throw new Meteor.Error("Error getting resource with id: " + id + " error: " + e);
+		}
+			return resource;
+	},
+
 });

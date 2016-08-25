@@ -11,6 +11,10 @@ Template.CienaServices.created = function () {
 };
 
 Template.CienaServices.events({
+	'click .service-row':function(event, template) {
+			Session.set('serviceID', this);
+			Router.go('ciena_service_detail', {id : this.label});
+	}
 
 });
 
