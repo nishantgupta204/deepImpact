@@ -16,7 +16,7 @@ Template.CienaDevices.events({
 });
 
 Template.CienaDevices.helpers({
-    'deviceProduct': function() {
+	'deviceProduct': function() {
         return Session.get("deviceProduct");
     },
     'devices': function() {
@@ -34,7 +34,7 @@ Template.CienaDevices.created = function() {
 
 };
 
-Template.deviceModal.events({
+Template.deviceCienaModal.events({
 
     'click .add-device': function(event, template) {
         event.preventDefault();

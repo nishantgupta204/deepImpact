@@ -8,11 +8,6 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
-	'sendMail': function (options) {
-		this.unblock();
-
-		Email.send(options);
-	},
 	'mdso_getDevices': function(device){
     	var result = Meteor.call("mdso_getProductID", device)
     	var devices = Meteor.call("mdso_getProducts", result.id)
@@ -26,7 +21,7 @@ Meteor.methods({
             console.log("Patching service ID: " + service.id);
     		var authToken = mdso_getHash("PATCH", path);
             try {
-                var body = {"discovered":false}		
+                var body = {"discovered":false}
     			var response = HTTP.call('PATCH', url,
     				{
     					headers: { "Content-Type": "application/json", "Authorization": authToken },
@@ -84,17 +79,49 @@ Meteor.methods({
 			console.log("Error creating service " + service.label + " error: " + e);
 			throw new Meteor.Error("Error creating service " + service.label + " error: " + e);
 		}
-		
-		return service
     },
+	'mdso_addCienaDevice' :function(type,hostname){
+		console.log("Creating Ciena device type " + type + " hostname " + hostname);
+
+		// Items necessary for POST execution TODO: Move this to the onRender of the page and set a session variable
+		var tenantID =  Meteor.call("mdso_getDomain", "Ciena6x");
+		tenantID = tenantID.id
+		console.log("Successfully retrieved tenantID:" + tenantID);
+
+		var productDeviceId = Meteor.call("mdso_getProductID","raciena6x.resourceTypes.Device");
+		productDeviceId = productDeviceId.id
+		console.log("Successfully retrieved productDeviceId:" + productDeviceId);
+
+		var path = "/bpocore/market/api/v1/resources"
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("POST", path);
+		var url = appSettings.MDSO_server + path
+		console.log("url: " + url);
+		console.log("Authorization: " + authToken);
+
+		var body = {"label":hostname,"productId":productDeviceId,"tenantId":tenantID,"properties":{"typeGroup":"/typeGroups/Ciena6x","authentication":{"cli":{"username":"su","password":"wwp"}},"connection":{"hostname":hostname,"cli":{"hostport":22}}},"providerResourceId":"","discovered":false,"orchState":"unkown","reason":"","autoClean":true}
+		try {
+			var response = HTTP.call('POST', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false },
+					data : body
+				});
+			console.log("Created device " + hostname);
+			return {"created":"true"}
+		} catch (e) {
+			console.log("Error creating device id for MDSO domain: " + hostname + " error: " + e);
+			throw new Meteor.Error("Error creating device id for MDSO domain: " + hostname + " error: " + e);
+		}
+	},
 	'mdso_addDevice' :function(type,hostname){
 		console.log("Creating Huawei device type " + type + " hostname " + hostname);
-		
+
 		// Items necessary for POST execution TODO: Move this to the onRender of the page and set a session variable
 		var tenantID =  Meteor.call("mdso_getDomain", "EAN");
 		tenantID = tenantID.id
 		console.log("Successfully retrieved tenantID:" + tenantID);
-		
+
 		var productDeviceId = Meteor.call("mdso_getProductID","rahuawei.resourceTypes.Device");
 		productDeviceId = productDeviceId.id
 		console.log("Successfully retrieved productDeviceId:" + productDeviceId);
@@ -106,7 +133,7 @@ Meteor.methods({
 		console.log("url: " + url);
 		console.log("Authorization: " + authToken);
 
-		var body = {"label":hostname,"productId":productDeviceId,"tenantId":tenantID,"properties":{"typeGroup":"/typeGroups/Huawei","authentication":{"cli":{"username":"devops","password":"freelunch"}},"connection":{"hostname":hostname,"cli":{"hostport":22}}},"providerResourceId":"","discovered":false,"orchState":"unkown","reason":"","autoClean":true}		
+		var body = {"label":hostname,"productId":productDeviceId,"tenantId":tenantID,"properties":{"typeGroup":"/typeGroups/Huawei","authentication":{"cli":{"username":"devops","password":"freelunch"}},"connection":{"hostname":hostname,"cli":{"hostport":22}}},"providerResourceId":"","discovered":false,"orchState":"unkown","reason":"","autoClean":true}
 		try {
 			var response = HTTP.call('POST', url,
 				{
@@ -192,7 +219,7 @@ Meteor.methods({
 			throw new Meteor.Error("Error getting id for MDSO Product: " + product + " error: " + e);
 		}
 	},
-	
+
 	'mdso_getProducts': function(product){
 	    console.log("Getting products for product:" + product);
 		var path = "/bpocore/market/api/v1/resources?productId=" + product
@@ -218,14 +245,14 @@ Meteor.methods({
 			throw new Meteor.Error("Error getting mdso_getProducts: " + product + " error: " + e);
 		}
 	},
-	
-	'mdso_getServiceID': function(service, product){
-	    console.log("Getting Service:" + service + " for product:" + product);
+
+	'mdso_getProductsByLabel': function(label, product){
+	    console.log("Getting Service:" + label + " for product:" + product);
 		var prodID =  Meteor.call("mdso_getProductID", product);
-		var productID = prodID.id + "&q=label:" + service
+		var productID = prodID.id + "&q=label:" + label
 		var products =  Meteor.call("mdso_getProducts", productID);
-		console.log("Services for service " + service + ":\n" + JSON.stringify(products, null, 2));
-      
+		console.log("Products with label " + label + ":\n" + JSON.stringify(products, null, 2));
+
 		var did = products.length;
 		console.log("Resource " + product + " has " + did + " unique products");
 		return products;
@@ -250,10 +277,10 @@ Meteor.methods({
 			console.log("content: " + JSON.stringify(content));
             content.forEach(function(item){
                 var searchID = {"id":item.label}
-                var index = services.findIndex(services => services.id==item.label)   
+                var index = services.findIndex(services => services.id==item.label)
                 if (index === -1){
                     services.push(searchID);
-                }                
+                }
             });
 			console.log(JSON.stringify(response, null, 2));
 			console.log("services:" + JSON.stringify(services, null, 2));
@@ -264,5 +291,34 @@ Meteor.methods({
 			console.log("Error getting mdso_getServicesUnique: " + product + " error: " + e);
 			throw new Meteor.Error("Error getting mdso_getServicesUnique: " + product + " error: " + e);
 		}
-	}
+	},
+
+	'mdso_getProductsByName': function(name){
+			var result = Meteor.call("mdso_getProductID", name)
+			var products = Meteor.call("mdso_getProducts", result.id)
+			return products;
+	},
+
+	'mdso_getResourceById': function(id){
+		console.log("Getting Resource with id:" + id);
+		var path = "/bpocore/market/api/v1/resources/" + id;
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("GET", path);
+		var url = appSettings.MDSO_server + path
+		console.log("url: " + url);
+		console.log("Authorization: " + authToken);
+		try {
+			var response = HTTP.call('GET', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false }
+			});
+			return JSON.parse(response.content);
+		} catch (e) {
+			console.log("Error getting resource with id: " + id);
+			throw new Meteor.Error("Error getting resource with id: " + id + " error: " + e);
+		}
+			return resource;
+	},
+
 });

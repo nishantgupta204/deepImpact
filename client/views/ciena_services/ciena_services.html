@@ -3,12 +3,35 @@
 		<div class="row" id="title_row">
 			<div class="col-md-12">
 				<h2 id="page_title" class="pull-left">
-					Ciena Devices
+					Ciena Services
 				</h2>
-				<div id="page_menu" class="pull-right">
-				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+					<a type="button" href="/ciena_service_add" class="btn btn-info">Add</a>
+			</div>
+		</div>
+
+		<div class="row" style="padding-top:15px;">
+			<div class="col-md-12">
+
+				<table class="table table-striped table-responsive table-hover">
+					<thead><tr><th>Service ID</th><th>Label</th></tr></thead>
+					<tbody>
+					{{#each services}}
+						<tr class="service-row">
+							<td class="col-sm-8 col-md-6">
+								<div class="media-body">
+									<h4 class="media-heading">{{this.id}}</h4>
+								</div>
+							</td>
+							<td>{{this.label}}</td>
+						</tr>
+					{{/each}}
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
 </template>
-

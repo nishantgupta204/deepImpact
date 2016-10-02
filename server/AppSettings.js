@@ -1,14 +1,14 @@
 AppSettings = new Mongo.Collection("AppSettings");
 
 var settings = {
-    "MDSO_server" : "https://192.168.162.5",
+    "MDSO_server" : "https://10.206.31.150",
     "MDSO_user"   : "admin",
     "MDSO_pass"   : "adminpw",
     
     // Obtain key from UAC in BP Server
     // HMAC code does not yet function.  Pull requests welcome
-    "MDSO_keyID"  : "832a3e59164e674ab0794c988c7a776a34376f22",
-    "MDSO_keySecret": "cce9c7daa8fd82ad3faca8e5373c35d8a1af126c"
+    "MDSO_keyID"  : "27a0a900eb3262010d83bc08b39106c90a597cfe",
+    "MDSO_keySecret": "3ded42036374bd69853d957cc84cbf09fa37bb46"
 };
 
 AppSettings.allow({
