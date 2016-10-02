@@ -5,6 +5,7 @@ Template.HuaweiDevice.rendered = function() {
 Template.HuaweiDevice.events({
     'click .delete-device':function(event, template) {
         var device = Session.get("device");
+        alert("here")
 	 Meteor.call("mdso_deleteDevice", device.id, function (error, result) {
         if (result) {
           Router.go('huawei_devices');
