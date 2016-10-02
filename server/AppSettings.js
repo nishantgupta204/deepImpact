@@ -6,7 +6,6 @@ var settings = {
     "MDSO_pass"   : "adminpw",
     
     // Obtain key from UAC in BP Server
-    // HMAC code does not yet function.  Pull requests welcome
     "MDSO_keyID"  : "27a0a900eb3262010d83bc08b39106c90a597cfe",
     "MDSO_keySecret": "3ded42036374bd69853d957cc84cbf09fa37bb46"
 };
