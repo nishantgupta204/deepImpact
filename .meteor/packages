@@ -34,3 +34,4 @@ jparker:crypto-sha256
 session@1.1.6
 shell-server
 d3js:d3
+raix:handlebar-helpers

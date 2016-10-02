@@ -24,6 +24,8 @@ Template.Ciena.created = function () {
   });
 };
 
+// CienaCienaDevices
+
 Template.CienaCienaDevices.rendered = function() {
 	
 };
@@ -40,6 +42,8 @@ Template.CienaCienaDevices.helpers({
 	
 });
 
+// CienaCienaServices
+
 Template.CienaCienaServices.rendered = function() {
 	
 };
@@ -53,5 +57,23 @@ Template.CienaCienaServices.events({
 });
 
 Template.CienaCienaServices.helpers({
+	
+});
+
+// CienaDownerCienaDevices
+
+Template.CienaDownerCienaDevices.rendered = function() {
+	
+};
+
+Template.CienaDownerCienaDevices.events({
+	"click #jumbotron-button": function(e, t) {
+		e.preventDefault();
+		Router.go("ciena_downer_devices", {});
+	}
+	
+});
+
+Template.CienaDownerCienaDevices.helpers({
 	
 });

@@ -1,0 +1,42 @@
+<template name="CienaDownerDevices">
+  <div class="page-container container" id="content">
+    <div class="row" id="title_row">
+      <div class="col-md-12">
+        <h2 id="page_title" class="pull-left">
+          Ciena Devices {{deviceProduct.id}}
+        </h2>
+        <div id="page_menu" class="pull-right">
+        </div>
+        <div class="container-fluid">
+          <table class="table table-striped table-responsive table-hover">
+            <tbody>
+              {{#each devices}}
+              <tr class="service-row">
+                <td class="col-sm-3 col-md-3">
+                  <div class="media-body">
+                    <h4 class="media-heading"> Chassis MAC: <span class="label label-primary">{{properties.chassisMAC}} </span></h4>
+                    <h4 class="media-heading"> Remote Mgt MAC:  <span class="label label-primary">{{properties.remoteMgtMAC}} </span></h4>
+                    <h5 class="media-heading">dhcp IP: {{properties.dhcpIP}}</h5>
+                    <h5 class="media-heading">dhcp Gateway: {{properties.dhcpGateway}}</h5>
+                    <h5 class="media-heading">hostname: {{properties.hostname}}</h5>
+                  </div>
+                </td>
+                <td class="col-sm-4 col-md-4">
+                  <form class="form-inline">
+                    <div class="form-group">
+                      <label for=input{{id}}>Hostname</label>
+                      <input type="text" class="form-control" id=input{{id}} placeholder="WGTN_3906-1">
+                    </div>
+                    <button type="submit" id={{id}} class="btn btn-success set-hostname">Set Hostname and static IP</button>
+                  </form>
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>

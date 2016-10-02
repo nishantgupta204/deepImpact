@@ -34,7 +34,7 @@ Template.CienaDevices.created = function() {
 
 };
 
-Template.deviceCienaModal.events({
+Template.deviceModalCiena.events({
 
     'click .add-device': function(event, template) {
         event.preventDefault();

@@ -8,11 +8,41 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
+	'mdso_setHostnameDevices': function(hostname){
+		console.log("Patching DeviceDetail:" + hostname.id + " to static assignment " + hostname.properties.staticIP + " " + hostname.properties.hostname );
+        var path = "/bpocore/market/api/v1/resources/" + hostname.id
+        var appSettings = AppSettings.findOne();
+        var url = appSettings.MDSO_server + path
+		
+		var authToken = mdso_getHash("PATCH", path);
+		try {
+			var body = {"properties":hostname.properties}
+			console.log(body)
+			var response = HTTP.call('PATCH', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false },
+					data: body
+				});
+			console.log("Patched DeviceDetail:" + hostname.id);
+			return response
+		} catch (e) {
+			var errorValue = "Error patching DeviceDetail for id: " + hostname.id + " error: " + e
+			console.log(errorValue);
+			throw new Meteor.Error(errorValue);
+		}		
+		
+	},
 	'mdso_getDevices': function(device){
     	var result = Meteor.call("mdso_getProductID", device)
-    	var devices = Meteor.call("mdso_getProducts", result.id)
+    	var devices = Meteor.call("mdso_getProducts", result.id,"")
     	return devices
 	},
+	'mdso_getDhcpDevices': function(device){
+    	var result = Meteor.call("mdso_getProductID", device)
+    	var devices = Meteor.call("mdso_getProducts", result.id,"&q=properties.dhcpClient:true")
+    	return devices
+	},	
     'mdso_removeEndpoint': function(service){
         var path = "/bpocore/market/api/v1/resources/" + service.id
         var appSettings = AppSettings.findOne();
@@ -220,9 +250,9 @@ Meteor.methods({
 		}
 	},
 
-	'mdso_getProducts': function(product){
+	'mdso_getProducts': function(product,query){
 	    console.log("Getting products for product:" + product);
-		var path = "/bpocore/market/api/v1/resources?productId=" + product
+		var path = "/bpocore/market/api/v1/resources?productId=" + product + query
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path

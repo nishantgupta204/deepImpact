@@ -3,7 +3,10 @@ Template.Home.rendered = function() {
 };
 
 Template.Home.events({
-	
+		"click .ciena-jumbotron-button": function(e, t) {
+		e.preventDefault();
+		Router.go("ciena", {});
+	}
 });
 
 Template.Home.helpers({

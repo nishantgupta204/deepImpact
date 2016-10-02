@@ -11,6 +11,15 @@ Template.CienaDevice.events({
               Router.go('ciena_devices');
             }
       });
+    },
+      'click .reset-device':function(event, template) {
+        var device = Session.get("device");
+        alert(device)
+    	 Meteor.call("mdso_resetCienaDevice", device.id, function (error, result) {
+            if (result) {
+              Router.go('ciena_devices');
+            }
+      });
     }
 });
 

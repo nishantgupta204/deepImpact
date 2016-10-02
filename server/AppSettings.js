@@ -1,7 +1,9 @@
 AppSettings = new Mongo.Collection("AppSettings");
 
 var settings = {
-    "MDSO_server" : "https://10.206.31.150",
+    // "MDSO_server" : "https://10.206.31.150",
+    // Devops toolkit setting
+    "MDSO_server" : "http://localhost:9980",
     "MDSO_user"   : "admin",
     "MDSO_pass"   : "adminpw",
     
@@ -21,7 +23,6 @@ AppSettings.allow({
     return false;
   }
 });
-
 
 if (AppSettings.find().count() === 0) {
   AppSettings.insert(settings);

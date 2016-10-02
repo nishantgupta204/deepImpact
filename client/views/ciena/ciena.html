@@ -17,7 +17,7 @@
 						<h3 class="media-heading">Domain ID: {{id}}</h3>
 						<h4> {{description}}</h4>
 						<h5> domainType: {{domainType}}</h5>
-						<h5> operationMode: <span class="label label-primary label-{{#if statusIs "normal"}}success {{/if}}"><strong>{{operationMode}}</strong></span></h5>
+						<h5> operationMode: <span class="label label-primary label-{{#if statusIs " normal "}}success {{/if}}"><strong>{{operationMode}}</strong></span></h5>
 						{{/with}}
 					</div>
 				</div>
@@ -27,7 +27,7 @@
 		<p id="page_text">
 			Welcome to the BP easy prov page
 		</p>
-		{{> CienaCienaDevices}}{{> CienaCienaServices}}
+		{{> CienaDownerCienaDevices}}{{> CienaCienaServices}}{{> CienaCienaDevices}}
 	</div>
 </template>
 
@@ -35,9 +35,28 @@
 	<div class="jumbotron ">
 		<div id="content" class="container">
 			<h1 id="component-title">
-				Devices
+				Devices Admin
 			</h1>
 			<p id="jumbotron-text">
+				Admin page for device management.  Add/Remove devices.  Factory reset a device. 
+			</p>
+			<p id="jumbotron-button">
+				<a href="#" class="btn btn btn-primary btn-lg" role="button">
+					Continue &raquo;
+				</a>
+			</p>
+		</div>
+	</div>
+</template>
+
+<template name="CienaDownerCienaDevices">
+	<div class="jumbotron ">
+		<div id="content" class="container">
+			<h1 id="component-title">
+				Device Commissioning
+			</h1>
+			<p id="jumbotron-text">
+				This page shows a list of devices that have not yet been assigned a static IP addres or hostname
 			</p>
 			<p id="jumbotron-button">
 				<a href="#" class="btn btn btn-primary btn-lg" role="button">
@@ -64,4 +83,3 @@
 		</div>
 	</div>
 </template>
-
