@@ -22,6 +22,7 @@ AppSettings.allow({
   }
 });
 
+
 if (AppSettings.find().count() === 0) {
   AppSettings.insert(settings);
 }
