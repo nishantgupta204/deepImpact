@@ -5,21 +5,22 @@ Template.CienaDevice.rendered = function() {
 Template.CienaDevice.events({
     'click .delete-device':function(event, template) {
         var device = Session.get("device");
-        alert(device)
+        alert(JSON.stringify(device))
     	 Meteor.call("mdso_deleteDevice", device.id, function (error, result) {
             if (result) {
               Router.go('ciena_devices');
             }
       });
     },
-      'click .reset-device':function(event, template) {
-        var device = Session.get("device");
-        alert(device)
-    	 Meteor.call("mdso_resetCienaDevice", device.id, function (error, result) {
+    'click .reset-device': function(event, template){
+      var device = Session.get("device");
+        // alert(JSON.stringify(device))
+
+        Meteor.call("mdso_clicutthrough", "reset_device", device.providerResourceId, function(error, result) {
             if (result) {
-              Router.go('ciena_devices');
+                Router.go('ciena_devices');
             }
-      });
+        });
     }
 });
 

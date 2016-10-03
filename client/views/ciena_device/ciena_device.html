@@ -29,10 +29,8 @@
             </tbody>
           </table>
           {{#if $eq device.properties.communicationState "AVAILABLE"}}
-          <button type="button" class="btn btn-danger reset-device">Cold Reset</button>
-          {{else}}
-          <button type="button" class="btn btn-danger delete-device">Remove from BP</button>
-          {{/if}}
+          <button type="button" class="btn btn-danger reset-device">Factory Reset</button> {{else}}
+          <button type="button" class="btn btn-danger delete-device">Remove from BP</button> {{/if}}
         </div>
       </div>
     </div>

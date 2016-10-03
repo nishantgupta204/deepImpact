@@ -47,6 +47,6 @@ Template.deviceModalCiena.events({
                 Router.go('ciena_devices');
             }
         });
-        $('#deviceModal').modal('hide');
+        $('#deviceModalCiena').modal('hide');
     }
 });

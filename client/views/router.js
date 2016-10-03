@@ -45,7 +45,6 @@ Router.map(function () {
 	this.route("huawei_service_detail", {path: "/huawei_service_detail/:id", controller: "HuaweiServiceDetailController"});
 	this.route("ciena_devices", {path: "/ciena_devices", controller: "CienaDevicesController"});
 	this.route("ciena_device", {path: "/ciena_device/:id", controller: "CienaDeviceController"});
-	this.route("ciena_downer_device", {path: "/ciena_downer_device/:id", controller: "CienaDownerDeviceController"});
 	this.route("ciena_downer_devices", {path: "/ciena_downer_devices", controller: "CienaDownerDevicesController"});
 	this.route("ciena_services", {path: "/ciena_services", controller: "CienaServicesController"});
 	this.route("ciena_service_detail", {path: "/ciena_service_detail/:id", controller: "CienaServiceDetailController"});

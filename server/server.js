@@ -8,6 +8,22 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
+	'mdso_clicutthrough': function(name, device){
+		console.log("Executing CLI " + name + " cutthrough to device:" + device );
+		if (name = "reset_device") {
+			var body = {
+				"properties": {
+					"device": device,
+					"commands": "configuration reset-to-factory-defaults\n",
+					"name": name
+				}
+			}
+			var clicutthrough = Meteor.call("mdso_postResource","Ciena6x", "raciena6x.resourceTypes.CutthroughCli", body)
+			console.log("Successfully executed clicutthough")
+			return clicutthrough
+		}
+	},
+
 	'mdso_setHostnameDevices': function(hostname){
 		console.log("Patching DeviceDetail:" + hostname.id + " to static assignment " + hostname.properties.staticIP + " " + hostname.properties.hostname );
         var path = "/bpocore/market/api/v1/resources/" + hostname.id
@@ -34,13 +50,13 @@ Meteor.methods({
 		
 	},
 	'mdso_getDevices': function(device){
-    	var result = Meteor.call("mdso_getProductID", device)
-    	var devices = Meteor.call("mdso_getProducts", result.id,"")
+    	var productID = Meteor.call("mdso_getProductID", device)
+    	var devices = Meteor.call("mdso_getProducts", productID.id,"")
     	return devices
 	},
 	'mdso_getDhcpDevices': function(device){
-    	var result = Meteor.call("mdso_getProductID", device)
-    	var devices = Meteor.call("mdso_getProducts", result.id,"&q=properties.dhcpClient:true")
+    	var productID = Meteor.call("mdso_getProductID", device)
+    	var devices = Meteor.call("mdso_getProducts", productID.id,"&q=properties.dhcpClient:true")
     	return devices
 	},	
     'mdso_removeEndpoint': function(service){
@@ -78,10 +94,39 @@ Meteor.methods({
 			throw new Meteor.Error("Error deleting service id:" + service.id + " error: " + e);
 		}
     },
-    'mdso_addServiceHuawei' :function(service){
+	'mdso_postResource' :function(domain, product, body){
+		var tenantId =  Meteor.call("mdso_getDomain", domain);
+		console.log("Successfully retrieved tenantID:" + tenantId.id);
+		var productId = Meteor.call("mdso_getProductID",product);
+		console.log("Successfully retrieved productId:" + productId.id);
+
+		var path = "/bpocore/market/api/v1/resources"
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("POST", path);
+		var url = appSettings.MDSO_server + path
+
+		body.productId = productId.id
+		body.tenantId = tenantId.id
+
+		try {
+			var response = HTTP.call('POST', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false },
+					data : body
+				});
+			console.log("Created resource " + response.data.id);
+			return {"created":"true"}
+		} catch (e) {
+			var errorResponse = "Error creating resource for MDSO domain: " + domain + " error: " + e
+			console.log(errorResponse);
+			throw new Meteor.Error(errorResponse);
+		}
+
+	},
+    'mdso_addServiceHuawei': function(service){
 		var tenantID =  Meteor.call("mdso_getDomain", "EAN");
 		tenantID = tenantID.id
-		console.log("Successfully retrieved tenantID:" + tenantID);
 		service.tenantId = tenantID
 		service.orchState = "active"
 		service.autoClean = true
@@ -91,8 +136,6 @@ Meteor.methods({
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("POST", path);
 		var url = appSettings.MDSO_server + path
-		console.log("url: " + url);
-		console.log("Authorization: " + authToken);
 
 		var body = service
 		try {
@@ -129,7 +172,9 @@ Meteor.methods({
 		console.log("url: " + url);
 		console.log("Authorization: " + authToken);
 
-		var body = {"label":hostname,"productId":productDeviceId,"tenantId":tenantID,"properties":{"typeGroup":"/typeGroups/Ciena6x","authentication":{"cli":{"username":"su","password":"wwp"}},"connection":{"hostname":hostname,"cli":{"hostport":22}}},"providerResourceId":"","discovered":false,"orchState":"unkown","reason":"","autoClean":true}
+		var body = {"label":hostname,"productId":productDeviceId,"tenantId":tenantID,"properties":{
+		"typeGroup":"/typeGroups/Ciena6x","authentication":{"cli":{"username":"su","password":"wwp"}},"connection":{"hostname":hostname,"cli":{"hostport":22}}},
+		"autoClean":true}
 		try {
 			var response = HTTP.call('POST', url,
 				{
@@ -304,7 +349,6 @@ Meteor.methods({
 			var services = [];
 			var content = JSON.parse(response.content);
 			content = content.items
-			console.log("content: " + JSON.stringify(content));
             content.forEach(function(item){
                 var searchID = {"id":item.label}
                 var index = services.findIndex(services => services.id==item.label)
