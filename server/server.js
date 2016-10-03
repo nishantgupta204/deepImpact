@@ -22,6 +22,18 @@ Meteor.methods({
 			console.log("Successfully executed clicutthough")
 			return clicutthrough
 		}
+		if (name = "set_hostname"){
+			var body = {
+				"properties": {
+					"device": device,
+					"commands": "configuration reset-to-factory-defaults\n",
+					"name": name
+				}
+			}
+			var clicutthrough = Meteor.call("mdso_postResource","Ciena6x", "raciena6x.resourceTypes.CutthroughCli", body)
+			console.log("Successfully executed clicutthough")
+			return clicutthrough
+		}
 	},
 
 	'mdso_setHostnameDevices': function(hostname){

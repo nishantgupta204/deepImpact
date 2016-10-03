@@ -21,6 +21,15 @@ Template.CienaDevice.events({
                 Router.go('ciena_devices');
             }
         });
+    },
+    'click .set-hostname': function(event, template){
+      var device = Session.get("device");
+        alert(JSON.stringify(device))
+
+        Meteor.call("mdso_clicutthrough", "set_hostname", device.providerResourceId, function(error, result) {
+            if (result) {
+            }
+        });
     }
 });
 
