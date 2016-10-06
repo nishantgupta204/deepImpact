@@ -1,0 +1,274 @@
+<template name="CienaServiceStory">
+	<div class="page-container container" id="content">
+		<div class="row" id="title_row">
+			<div class="col-md-12">
+				<h2 id="page_title" class="pull-left">
+					Service Activation on the Ciena Domain
+				</h2>
+				<div id="page_menu" class="pull-right">
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-8">
+				<div class="media">
+					<div class="media-body">
+						{{#with domain}}
+						<h5>Domain Status {{domainType}}<span class="label label-primary label-success"><strong>{{operationMode}}</strong></span></h5>
+						{{/with}} {{serviceStoryText}}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{{> CienaServiceStoryType}} {{> CienaServiceStoryCEPipe}} {{> CienaServiceStoryCETopo}} {{> CienaServiceStoryBundling }}
+	</div>
+</template>
+
+
+<template name="CienaServiceStoryType">
+	<div class="panel panel-info ">
+
+		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
+			<h3>Service Type Selection</h3>
+		</div>
+		<div class="panel panel-body text-center">
+			<div class="col-md-4 ">
+
+				<div class="jumbotron text-center">
+					<div id="content" class="container text-center">
+						<h2 id="component-title">
+							<img src="/images/CarrierEthernet.png" class="img-responsive">
+						</h2>
+						<p id="jumbotron-text">
+							Carrier Ethernet
+						</p>
+						<p id="jumbotron-button">
+							<a class="btn btn-lg btn-{{#if $eq serviceStory.type "CE"}}success{{else}}primary{{/if}} CE" role="button">Select »</a>
+						</p>
+					</div>
+				</div>
+
+			</div>
+			<div class="col-md-4">
+
+				<div class="jumbotron text-center">
+					<div id="content" class="container text-center">
+						<h2 id="component-title">
+							<img src="/images/SIP.png" class="img-responsive center-block">
+						</h2>
+						<p id="jumbotron-text">
+							Voice
+						</p>
+						<p id="jumbotron-button">
+							<a class="btn btn-lg btn-{{#if $eq serviceStory.type "sip"}}success{{else}}primary{{/if}} sip" role="button">Select »</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+
+
+				<div class="jumbotron text-center">
+					<div id="content" class="container text-center">
+						<h2 id="component-title">
+							<img src="/images/internet.png" width="90" class="img-responsive center-block">
+						</h2>
+						<p id="jumbotron-text">
+							Internet
+						</p>
+						<p id="jumbotron-button">
+							<a class="btn btn-lg btn-{{#if $eq serviceStory.type "internet"}}success{{else}}primary{{/if}} internet" role="button">Select »</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="CienaServiceStoryCEPipe">
+	<div class="panel panel-info {{#if $eq serviceStory.type "CE"}}{{else}}hidden{{/if}}">
+
+		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
+			<h3>ePIPE Selection</h3>
+		</div>
+		<div class="panel panel-body text-center">
+			<div class="col-md-6">
+
+				<div class="jumbotron text-center">
+					<div id="content" class="container text-center">
+						<h1 id="component-title">
+
+						</h1>
+						<p id="jumbotron-text">
+							ePIPE is a dedicated pipe over TDM
+						</p>
+						<p id="jumbotron-button">
+							<a class="btn btn-lg btn-{{#if serviceStory.pipe}}success{{else}}primary{{/if}} pipeTrue" role="button">Yes »</a>
+						</p>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="col-md-6">
+
+				<div class="jumbotron ">
+					<div id="content" class="container ">
+						<h1 id="component-title">
+
+						</h1>
+						<p id="jumbotron-text">
+							non ePIPE traverses a switched core
+						</p>
+						<p id="jumbotron-button">
+							<a class="btn btn-lg btn-{{#if serviceStory.pipe}}primary{{else}}success{{/if}} pipeFalse" role="button">No »</a>
+						</p>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</template>
+
+<template name="CienaServiceStoryCETopo">
+	<div class="panel panel-info {{#if $eq serviceStory.type "CE"}}{{else}}hidden{{/if}}">
+
+		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
+			<h3>Service Topology Selection</h3>
+		</div>
+
+		<div class="panel panel-body">
+			<div class="col-md-4 text-center">
+				<div class="jumbotron text-center">
+					<div id="content" class="container text-center">
+						<h1 id="component-title">
+							<a href="https://wiki.mef.net/display/CESG/E-Line" target="_blank">
+								<img src="/images/eLine.png" class="img-responsive">
+							</a>
+						</h1>
+						<p id="jumbotron-button">
+							<a href="#" class="btn btn-{{#if $eq serviceStory.topo "eline"}}success{{else}}primary{{/if}} btn-lg eline" role="button">eLine &raquo;</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 text-center">
+
+				<div class="jumbotron text-center">
+					<div id="content" class="container text-center">
+						<h1 id="component-title">
+							<a href="https://wiki.mef.net/display/CESG/E-LAN" target="_blank">
+								<img src="/images/E-LAN.png" class="img-responsive center-block">
+							</a>
+						</h1>
+						<p id="jumbotron-button">
+							<a href="#" class="btn btn-{{#if $eq serviceStory.topo "elan"}}success{{else}}primary{{/if}} btn-lg elan" role="button">eLAN &raquo;</a>
+						</p>
+					</div>
+				</div>
+
+			</div>
+			<div class="col-md-4">
+				<div class="jumbotron text-center">
+					<div id="content" class="container text-center">
+						<h1 id="component-title">
+							<a href="https://wiki.mef.net/display/CESG/E-Access" target="_blank">
+								<img src="/images/E-Access.png" class="img-responsive center-block">
+							</a>
+						</h1>
+						<p id="jumbotron-button">
+							<a href="#" class="btn btn-{{#if $eq serviceStory.topo "eaccess"}}success{{else}}primary{{/if}} btn-lg eaccess" role="button">eAccess &raquo;</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<template name="CienaServiceStoryBundling">
+	<div class="panel panel-info">
+
+		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
+			<h3>UNI Bundling Option Selection</h3>
+		</div>
+		<div class="panel panel-body text-center">
+			<div class="col-md-6">
+				<div class="jumbotron ">
+					<div id="content" class="container">
+						<h1 id="component-title">
+							EP
+						</h1>
+						<p id="jumbotron-text">
+							All customer VLANs are bundled into the EVC
+						</p>
+						<p id="jumbotron-button">
+							<a href="#" class="btn btn-{{#if $eq serviceStory.bundling "EP"}}success{{else}}primary{{/if}} btn-lg bundlingEP" role="button">Continue &raquo;</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="jumbotron ">
+					<div id="content" class="container">
+						<h1 id="component-title">
+							EVP
+						</h1>
+						<p id="jumbotron-text">
+							Only specified cutomer vlans are bundled into the EVC
+						</p>
+						<p id="jumbotron-button">
+							<a href="#" class="btn btn-{{#if $eq serviceStory.bundling "EVP"}}success{{else}}primary{{/if}} btn-lg bundlingEVP" role="button">Continue &raquo;</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+
+<template name="CienaServiceStoryQoS">
+	<div class="panel panel-info">
+
+		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
+			<h3>UNI Bundling Option Selection</h3>
+		</div>
+		<div class="panel panel-body text-center">
+			<div class="col-md-6">
+				<div class="jumbotron ">
+					<div id="content" class="container">
+						<h1 id="component-title">
+							EP
+						</h1>
+						<p id="jumbotron-text">
+							All customer VLANs are bundled into the EVC
+						</p>
+						<p id="jumbotron-button">
+							<a href="#" class="btn btn-primary btn-lg bundlingEP" role="button">Continue &raquo;</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="jumbotron ">
+					<div id="content" class="container">
+						<h1 id="component-title">
+							EVP
+						</h1>
+						<p id="jumbotron-text">
+							Only specified cutomer vlans are bundled into the EVC
+						</p>
+						<p id="jumbotron-button">
+							<a href="#" class="btn btn-primary btn-lg bundlingEVP" role="button">Continue &raquo;</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>

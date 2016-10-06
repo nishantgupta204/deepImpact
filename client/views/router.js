@@ -20,7 +20,8 @@ var freeRoutes = [
 	"ciena_downer_devices",
 	"ciena_services",
 	"ciena_service_detail",
-	"ciena_service_add"
+	"ciena_service_add",
+	"ciena_service_story"
 ];
 
 Router.onBeforeAction(function() {
@@ -48,5 +49,6 @@ Router.map(function () {
 	this.route("ciena_downer_devices", {path: "/ciena_downer_devices", controller: "CienaDownerDevicesController"});
 	this.route("ciena_services", {path: "/ciena_services", controller: "CienaServicesController"});
 	this.route("ciena_service_detail", {path: "/ciena_service_detail/:id", controller: "CienaServiceDetailController"});
+	this.route("ciena_service_story", {path: "/ciena_service_story", controller: "CienaServiceStoryController"});
 	this.route("ciena_service_add", {path: "/ciena_service_add", controller: "CienaServiceAddController"});
 });

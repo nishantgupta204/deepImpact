@@ -12,46 +12,24 @@
       <div class="panel-body">
         <form id="createServiceForm" role="form" data-toggle="validator">
           <div class="row">
-            <div class="col-xs-12">
-              <div class="form-group">
-                <label for="serviceName" class="text-primary control-label">Service Name</label>
-                <input name="serviceName" id="serviceName" required pattern=".{4,}" class="form-control input-sm" {{enableOrDisable}} value="{{name}}">
-                <div class="help-block with-errors"></div>
-              </div>
-              <div {{hidden}} class="form-group">
-                <label for="createdOn" class="text-primary">Created On</label>
-                <input name="createdOn" id="createdOn" pattern=".{4,}" class="form-control input-sm" {{enableOrDisable}} value="{{createdOn}}">
-              </div>
-              <div class="form-group">
-                <label for="serviceType" class="text-primary">Service Type</label>
-                <select id="serviceType" class="form-control input-sm" {{enableOrDisable}}>
-                  {{#each serviceTypeOptions}}
-                    <option value="{{value}}" {{selected}}>{{label}}</option>
-                  {{/each}}
-                </select>
-              </div>
+            <div class="col-md-6 form-group">
+              <label for="serviceName" class="text-primary control-label">Service Name</label>
+              <input name="serviceName" id="serviceName" required pattern=".{4,}" class="form-control input-sm" {{enableOrDisable}} value="{{name}}">
+              <div class="help-block with-errors"></div>
+            </div>
+            <div class="col-md-6 form-group">
+              <label for="cosID" class="text-primary">Class of Service Identifier</label>
+              <select id="cosID" class="form-control input-sm" {{enableOrDisable}}>
+                  <option value="EVC">EVC - SCOS</option>
+                  <option value="PCP">PCP - MCOS</option>
+                  <option value="DSCP">DSCP - MCOS</option>
+              </select>
             </div>
           </div>
           <div class="row">
             <div class="col-xs-6">
               <div class="form-group">
-                <label for="nodeAHostName" class="text-primary">NodeA UNI Host</label>
-                <select id="nodeAHostName" class="form-control input-sm" {{enableOrDisable}}>
-                  {{#each aNodeHostNameOptions}}
-                  <option value="{{value}}" {{selected}}>{{label}}</option>
-                  {{/each}}
-                </select>
-              </div>
-            </div>
-            <div class="col-xs-6">
-              <div class="form-group">
-                <label for="nodeAPort" class="text-primary">NodeA UNI Port</label>
-                <select id="nodeAPort" class="form-control input-sm" {{enableOrDisable}}></select>
-              </div>
-            </div>
-            <div class="col-xs-6">
-              <div class="form-group">
-                <label id="nodeZHostNameLabel" for="nodeZHostName" class="text-primary">NodeZ UNI Host</label>
+                <label id="nodeZHostNameLabel" for="nodeZHostName" class="text-primary">Hostname</label>
                 <select id="nodeZHostName" class="form-control input-sm" {{enableOrDisable}}>
                   {{#each zNodeHostNameOptions}}
                   <option value="{{value}}" {{selected}}>{{label}}</option>
@@ -61,8 +39,8 @@
             </div>
             <div class="col-xs-6">
               <div class="form-group">
-                <label id="nodeZPortLabel" for="nodeZPort" class="text-primary">NodeZ UNI Port</label>
-                <select id="nodeZPort" class="form-control input-sm" {{enableOrDisable}}></select>
+                <label id="nodeCustPortLabel" for="nodeCustPort" class="text-primary">UNI Port</label>
+                <select id="nodeCustPort" class="form-control input-sm" {{enableOrDisable}}></select>
               </div>
             </div>
             <div class="col-xs-4">
@@ -70,12 +48,12 @@
                 <label for="speed" class="text-primary control-label">Speed<sup>(M)</sup></label>
                 <input name="speed" id="speed" required class="form-control input-sm" type="number" {{enableOrDisable}} value="{{speed}}">
                 <div class="help-block with-errors"></div>
-            </div>
+              </div>
             </div>
             <div class="col-xs-4">
               <div class="form-group">
                 <label for="vlan" class="text-primary control-label">VLan</label>
-                <input name="vlan" id="vlan" required  class="form-control input-sm" type="number" {{enableOrDisable}} value="{{vlan}}">
+                <input name="vlan" id="vlan" required class="form-control input-sm" type="number" {{enableOrDisable}} value="{{vlan}}">
                 <div class="help-block with-errors"></div>
               </div>
             </div>
