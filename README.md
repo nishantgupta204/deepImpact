@@ -4,9 +4,9 @@ Deep Impact
 
 ## Introduction
 
-This repository contains a [meteor](www.meteor.com) app that communicates to Ciena Blue Planet.
+This repository contains a [meteor](http://www.meteor.com) app that communicates to Ciena Blue Planet.
 
-The scaffolding was built using [meteor kitchen](www.meteorkitchen.com)
+The scaffolding was built using [meteor kitchen](http://www.meteorkitchen.com)
 
 A couple example domains are included as example.
 
