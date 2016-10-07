@@ -20,14 +20,30 @@
 				</div>
 			</div>
 		</div>
+		<div class="{{#if serviceStory.type}}hidden{{/if}}">
+		{{> CienaServiceStoryType}}
+		</div>
+		<div class="{{#if $eq serviceStory.type "CE"}}{{else}}hidden{{/if}}">
+		<div class="{{#if serviceStory.pipe}}hidden{{/if}}">		
+		{{> CienaServiceStoryCEPipe}}
+		</div>
+		<div class="{{#if serviceStory.topo}}hidden{{/if}}">
+		{{> CienaServiceStoryCETopo}} 
+		</div>
+		</div>
+		<div class="{{#if serviceStory.bundling}}hidden{{/if}}">
+		{{> CienaServiceStoryBundling }}
+		</div>
+		<div class="">
+		{{> CienaServiceStoryHeader }}
+		</div>
 
-		{{> CienaServiceStoryType}} {{> CienaServiceStoryCEPipe}} {{> CienaServiceStoryCETopo}} {{> CienaServiceStoryBundling }}
 	</div>
 </template>
 
 
 <template name="CienaServiceStoryType">
-	<div class="panel panel-info ">
+	<div class="panel panel-info col-md-12">
 
 		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
 			<h3>Service Type Selection</h3>
@@ -207,7 +223,7 @@
 							All customer VLANs are bundled into the EVC
 						</p>
 						<p id="jumbotron-button">
-							<a href="#" class="btn btn-{{#if $eq serviceStory.bundling "EP"}}success{{else}}primary{{/if}} btn-lg bundlingEP" role="button">Continue &raquo;</a>
+							<a href="#" class="btn btn-{{#if $eq serviceStory.bundling "P"}}success{{else}}primary{{/if}} btn-lg bundlingEP" role="button">Continue &raquo;</a>
 						</p>
 					</div>
 				</div>
@@ -222,7 +238,7 @@
 							Only specified cutomer vlans are bundled into the EVC
 						</p>
 						<p id="jumbotron-button">
-							<a href="#" class="btn btn-{{#if $eq serviceStory.bundling "EVP"}}success{{else}}primary{{/if}} btn-lg bundlingEVP" role="button">Continue &raquo;</a>
+							<a href="#" class="btn btn-{{#if $eq serviceStory.bundling "VP"}}success{{else}}primary{{/if}} btn-lg bundlingEVP" role="button">Continue &raquo;</a>
 						</p>
 					</div>
 				</div>
@@ -272,3 +288,196 @@
 		</div>
 	</div>
 </template>
+
+
+<template name="CienaServiceStoryHeader">
+	<div class="panel panel-info">
+		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
+			<h3>General Information requirements</h3>
+		</div>
+		<div class="panel panel-body text-center">
+			<div class="row col-md-12">
+				<div class="panel-body">
+					<form id="createServiceForm" role="form" data-toggle="validator">
+							<div class="col-md-4 form-group">
+								<label for="customerName" class="text-primary control-label">Customer ID</label>
+								<input name="customerName" id="customerName" required class="form-control input-sm" value="">
+								<div class="help-block with-errors"></div>
+							</div>
+							<div class="col-md-4 form-group">
+								<label for="serviceName" class="text-primary control-label">Service Name</label>
+								<input name="serviceName" id="serviceName" required class="form-control input-sm" value="{{serviceStory.evcID}}">
+								<div class="help-block with-errors"></div>
+							</div>
+							{{#if $eq serviceStory.type "CE"}}
+							<div class="col-md-4 form-group">
+								<label for="cosID" class="text-primary">Class of Service Identifier</label>
+								<select id="cosID" class="form-control input-sm cos-id">
+									<option value="EVC">EVC - SCOS</option>
+									<option value="PCP">PCP - MCOS</option>
+									<option value="DSCP">DSCP - MCOS</option>
+								</select>
+							</div>
+							{{/if}}
+					</form>
+				</div>
+			</div>
+		</div>
+		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
+			<h3>Endpoint Information</h3>
+		</div>
+		<div class="panel panel-body text-center">
+			<div class="row col-md-12">
+			
+	
+			{{#each serviceStory.endpoints}}
+				<div class="row row-bordered">
+				
+					<form id="endpoints" role="form" data-toggle="validator">
+
+						<div class="col-md-2">
+							<h3>
+								Device
+							</h3>
+							<div class="media-body">
+								<select id="curDeviceId" class="form-control input-sm" default="">
+									<option disabled selected="EVC">{{properties.device}}</option>
+									<option value="EVC">Device list here</option>
+								</select>
+							</div>
+						</div>
+						<div class="row col-md-offset-1 col-md-4">
+							{{#each properties.ennis}}
+								<h3 id="component-title">
+									ENNI
+								</h3>
+
+								<div class="media-body">
+									<label for={{this.id}} class="text-primary control-label">Port</label>
+									<select id={{this.id}} class="form-control input-sm">
+										<option disabled selected="default">Select...</option>
+										<option value="id">Device list here</option>
+									</select>
+								</div>
+								<div class="media-body">
+									<label for="l2cp" class="text-primary control-label">Ctrl Prot Tunnel</label>
+									<select id="l2cp" class="form-control input-sm">
+										<option value="transparent">transparent</option>
+										<option value="l2pt">l2pt</option>
+									</select>
+								</div>
+								<div class="media-body">
+									<label for="tpid" class="text-primary control-label">Ethertype</label>
+									<select id="tpid" class="form-control input-sm">
+										<option value="8100">8100</option>
+										<option value="88A8">88A8</option>
+										<option value="9100">9100</option>
+									</select>
+								</div>
+								{{#each cosCfg}}
+								<div class="container fluid-container">
+								<div class="media-body">
+									
+									<label for="classOfServiceName" class="text-primary control-label">Port</label>
+									<select id="classOfServiceName" class="form-control input-sm">
+										<option selected="default">{{classOfServiceName}}</option>
+										<option value="classOfServiceName">Interactive</option>
+										<option value="classOfServiceName">Business Critical</option>
+										<option value="classOfServiceName">Non Critical</option>
+									</select>
+								</div>
+								<div class="media-body">
+									
+									<label for="ingressCir" class="text-primary control-label">ingressCir</label>
+									<input name="ingressCir" id="ingressCir" class="form-control input-sm" value="{{ingressCir}}">
+									<div class="help-block with-errors"></div>
+								</div>
+								</div>
+								{{/each}}
+
+
+							{{/each}}
+							{{#each properties.unis}}
+								<h3 id="component-title">
+									UNI
+								</h3>
+
+								<div class="media-body">
+									<label for="uniID" class="text-primary control-label">Port</label>
+									<select id="uniID" class="form-control input-sm">
+										<option disabled selected="default">Select...</option>
+										<option value="id">Device list here</option>
+									</select>
+								</div>
+						
+								{{#if $eq serviceStory.bundling "VP"}}
+								<div class="media-body">
+									<label for="cTag" class="text-primary control-label">CVLANs</label>
+									<input name="cTag" id="cTag" class="form-control input-sm" value="">
+									<div class="help-block with-errors"></div>
+								</div>
+								{{/if}}
+
+								<div class="row">
+								<h3 id="component-title">
+									Class of Service Config
+								</h3>
+								{{#each cosCfg}}
+								<div class="container fluid-container">
+								<div class="media-body">
+									<label for="classOfServiceName" class="text-primary control-label">Class of Service</label>
+									<select id="classOfServiceName" class="form-control input-sm">
+										<option selected="default">{{classOfServiceName}}</option>
+										<option value="classOfServiceName">Interactive</option>
+										<option value="classOfServiceName">Business Critical</option>
+										<option value="classOfServiceName">Non Critical</option>
+									</select>
+								</div>
+								<div class="media-body">
+									
+									<label for="ingressCir" class="text-primary control-label">ingressCir</label>
+									<input name="ingressCir" id="ingressCir" class="form-control input-sm" value="{{ingressCir}}">
+									<div class="help-block with-errors"></div>
+								</div>
+								</div>
+								{{/each}}
+								</div>
+							{{/each}}
+						</div>
+						<div class="row col-md-offset-1 col-md-4">
+							{{#each properties.innis}}
+								<h3 id="component-title">
+									INNI
+								</h3>
+
+								<div class="media-body">
+									<label for={{this.id}} class="text-primary control-label">Port</label>
+									<select id={{this.id}} class="form-control input-sm">
+										<option disabled selected="default">Select...</option>
+										<option value="id">Device list here</option>
+									</select>
+								</div>
+						
+								<div class="media-body">
+									<label for="sTag" class="text-primary control-label">Core VLAN</label>
+									<input name="sTag" id="sTag" class="form-control input-sm" value="">
+									<div class="help-block with-errors"></div>
+								</div>
+							{{/each}}
+						</div>
+					</form>
+				</div>
+			{{/each}}
+			</div>
+			{{#if $eq serviceStory.topo "elan"}}
+			<tr class="row">
+			<button type="button" class="btn btn-success device-add">New</button>
+			</tr>
+			 {{/if}}
+			 <tr>
+				 <button type="button" class="btn btn-success service-save">Save</button>
+			</tr>
+		</div>
+	</div>
+</template>
+
