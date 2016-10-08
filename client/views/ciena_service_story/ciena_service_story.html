@@ -15,7 +15,7 @@
 					<div class="media-body">
 						{{#with domain}}
 						<h5>Domain Status {{domainType}}<span class="label label-primary label-success"><strong>{{operationMode}}</strong></span></h5>
-						{{/with}} {{serviceStoryText}}
+						{{/with}} 
 					</div>
 				</div>
 			</div>
@@ -294,23 +294,24 @@
 	<div class="panel panel-info">
 		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
 			<h3>General Information requirements</h3>
+        	<button id="cancelButton" type="button" class="btn btn-sm btn-warning pull-right"><span class="glyphicon glyphicon-refresh"> Restart</span></button>
 		</div>
 		<div class="panel panel-body text-center">
-			<div class="row col-md-12">
+			<div class="col-md-12">
 				<div class="panel-body">
 					<form id="createServiceForm" role="form" data-toggle="validator">
-							<div class="col-md-4 form-group">
+							<div class="col-md-3 form-group">
 								<label for="customerName" class="text-primary control-label">Customer ID</label>
 								<input name="customerName" id="customerName" required class="form-control input-sm" value="">
 								<div class="help-block with-errors"></div>
 							</div>
-							<div class="col-md-4 form-group">
+							<div class="col-md-3 form-group">
 								<label for="serviceName" class="text-primary control-label">Service Name</label>
 								<input name="serviceName" id="serviceName" required class="form-control input-sm" value="{{serviceStory.evcID}}">
 								<div class="help-block with-errors"></div>
 							</div>
 							{{#if $eq serviceStory.type "CE"}}
-							<div class="col-md-4 form-group">
+							<div class="col-md-3 form-group">
 								<label for="cosID" class="text-primary">Class of Service Identifier</label>
 								<select id="cosID" class="form-control input-sm cos-id">
 									<option value="EVC">EVC - SCOS</option>
@@ -319,6 +320,51 @@
 								</select>
 							</div>
 							{{/if}}
+
+
+								{{#unless $eq serviceStory.topo "elan"}}
+								
+								<div class="col-md-3 text-center">
+					
+								<tr>
+								<label class="text-primary">Class of Service Config</label>
+								</tr>
+
+								<form class="form-inline">
+								<div class="form-group">
+								{{#if $eq serviceStory.cosId "EVC"}}
+									<select id="classOfServiceName" class="form-control input-sm">
+										{{#each mcosCfg in mcosCfgs}}
+										<option value="{{mcosCfg.classOfServiceName}}">{{mcosCfg.classOfServiceName}}</option>
+										{{/each}}
+									</select>
+									<select id="ingressCir" class="form-control input-sm">
+										{{#each bw in bws}}
+										<option value="{{bw}}">{{bw}}</option>
+										{{/each}}
+									</select>		
+								{{else}}
+								{{#each cosCfg in serviceStory.cosCfg}}
+								<tr>
+	  								<label for="{{cosCfg.classOfServiceName}}" class="text-primary control-label">{{cosCfg.classOfServiceName}}</label>
+									<select id="{{cosCfg.classOfServiceName}}" class="form-control input-sm">
+										{{#each bw in bws}}
+										<option value="{{bw}}">{{bw}}</option>
+										{{/each}}
+									</select>
+								</tr>
+  
+								{{/each}}
+								{{/if}}
+ 								</div>
+								</form>
+								</div>
+								{{/unless}}
+
+
+
+
+
 					</form>
 				</div>
 			</div>
@@ -374,27 +420,6 @@
 										<option value="9100">9100</option>
 									</select>
 								</div>
-								{{#each cosCfg}}
-								<div class="container fluid-container">
-								<div class="media-body">
-									
-									<label for="classOfServiceName" class="text-primary control-label">Port</label>
-									<select id="classOfServiceName" class="form-control input-sm">
-										<option selected="default">{{classOfServiceName}}</option>
-										<option value="classOfServiceName">Interactive</option>
-										<option value="classOfServiceName">Business Critical</option>
-										<option value="classOfServiceName">Non Critical</option>
-									</select>
-								</div>
-								<div class="media-body">
-									
-									<label for="ingressCir" class="text-primary control-label">ingressCir</label>
-									<input name="ingressCir" id="ingressCir" class="form-control input-sm" value="{{ingressCir}}">
-									<div class="help-block with-errors"></div>
-								</div>
-								</div>
-								{{/each}}
-
 
 							{{/each}}
 							{{#each properties.unis}}
@@ -417,8 +442,9 @@
 									<div class="help-block with-errors"></div>
 								</div>
 								{{/if}}
-
+								{{#if $eq serviceStory.topo "elan"}}
 								<div class="row">
+								
 								<h3 id="component-title">
 									Class of Service Config
 								</h3>
@@ -442,6 +468,7 @@
 								</div>
 								{{/each}}
 								</div>
+								{{/if}}
 							{{/each}}
 						</div>
 						<div class="row col-md-offset-1 col-md-4">
@@ -474,10 +501,12 @@
 			<button type="button" class="btn btn-success device-add">New</button>
 			</tr>
 			 {{/if}}
-			 <tr>
-				 <button type="button" class="btn btn-success service-save">Save</button>
-			</tr>
+
+		</div >
+		<div class="text-center">
+		<button type="button" class="btn btn-lg btn-success service-save">Save</button>
 		</div>
+		<pre>{{serviceStoryText}}</pre>
 	</div>
 </template>
 
