@@ -121,7 +121,7 @@
 							ePIPE is a dedicated pipe over TDM
 						</p>
 						<p id="jumbotron-button">
-							<a class="btn btn-lg btn-{{#if serviceStory.pipe}}success{{else}}primary{{/if}} pipeTrue" role="button">Yes »</a>
+							<a class="btn btn-lg btn-primary pipeTrue" role="button">Yes »</a>
 						</p>
 					</div>
 				</div>
@@ -139,7 +139,7 @@
 							non ePIPE traverses a switched core
 						</p>
 						<p id="jumbotron-button">
-							<a class="btn btn-lg btn-{{#if serviceStory.pipe}}primary{{else}}success{{/if}} pipeFalse" role="button">No »</a>
+							<a class="btn btn-lg btn-primary pipeFalse" role="button">No »</a>
 						</p>
 					</div>
 				</div>
@@ -375,46 +375,41 @@
 		<div class="panel panel-body text-center">
 			<div class="row col-md-12">
 			
-	
-			{{#each serviceStory.endpoints}}
-				<div class="row row-bordered">
-				
-					<form id="endpoints" role="form" data-toggle="validator">
+			{{#each endpoint in serviceStory.endpoints}}
+			{{#let endpointIndex=@index}}				
 
+				<div class="row row-bordered">
+					<form id="endpoints" role="form" data-toggle="validator">
 						<div class="col-md-2">
 							<h3>
 								Device
 							</h3>
 							<div class="media-body">
-								<select id="curDeviceId" class="form-control input-sm" default="">
-									<option disabled selected="EVC">{{properties.device}}</option>
-									<option value="EVC">Device list here</option>
+								<select id="{{endpointIndex}}" class="form-control input-sm device-id" default="">
+									<option disabled selected="EVC">{{endpoint.properties.device}}</option>
+										<!-- TODO: Device List here-->									
+									<option value="device1">Device list here</option>
 								</select>
 							</div>
 						</div>
 						<div class="row col-md-offset-1 col-md-4">
-							{{#each properties.ennis}}
+							{{#each enni in endpoint.properties.ennis}}
 								<h3 id="component-title">
 									ENNI
 								</h3>
 
 								<div class="media-body">
-									<label for={{this.id}} class="text-primary control-label">Port</label>
-									<select id={{this.id}} class="form-control input-sm">
+									<label for="enniId" class="text-primary control-label ">Port</label>
+									<select name="enniId" id="{{endpointIndex}}" class="form-control input-sm enni-id">
 										<option disabled selected="default">Select...</option>
-										<option value="id">Device list here</option>
+										<!-- TODO: Port List here-->																			
+										<option value="1">1</option>
+										<option value="2">2</option>
 									</select>
 								</div>
 								<div class="media-body">
-									<label for="l2cp" class="text-primary control-label">Ctrl Prot Tunnel</label>
-									<select id="l2cp" class="form-control input-sm">
-										<option value="transparent">transparent</option>
-										<option value="l2pt">l2pt</option>
-									</select>
-								</div>
-								<div class="media-body">
-									<label for="tpid" class="text-primary control-label">Ethertype</label>
-									<select id="tpid" class="form-control input-sm">
+									<label for="tpidId" class="text-primary control-label">Ethertype</label>
+									<select name="tpiId" id="{{endpointIndex}}" class="form-control input-sm tpid-id">
 										<option value="8100">8100</option>
 										<option value="88A8">88A8</option>
 										<option value="9100">9100</option>
@@ -422,25 +417,41 @@
 								</div>
 
 							{{/each}}
-							{{#each properties.unis}}
+							{{#each uni in endpoint.properties.unis}}
 								<h3 id="component-title">
 									UNI
 								</h3>
 
 								<div class="media-body">
-									<label for="uniID" class="text-primary control-label">Port</label>
-									<select id="uniID" class="form-control input-sm">
+									<label for="uniId" class="text-primary control-label">Port</label>
+									<select name="uniId" id="{{endpointIndex}}" class="form-control input-sm uni-id">
 										<option disabled selected="default">Select...</option>
-										<option value="id">Device list here</option>
+										<!-- TODO: Port List here-->																			
+										<option value="1">1</option>
+										<option value="2">2</option>
 									</select>
 								</div>
-						
+								{{#if $eq serviceStory.topo "eaccess"}}
+								<div class="media-body">
+									<label for="l2cpId" class="text-primary control-label">Ctrl Prot Tunnel</label>
+									<select name="l2cpId" id="{{endpointIndex}}" class="form-control input-sm l2cp-id">
+										<option value="transparent">transparent</option>
+										<option value="l2pt">l2pt</option>
+									</select>
+								</div>						
+								{{/if}}
 								{{#if $eq serviceStory.bundling "VP"}}
 								<div class="media-body">
-									<label for="cTag" class="text-primary control-label">CVLANs</label>
-									<input name="cTag" id="cTag" class="form-control input-sm" value="">
+									<label for="ctagId" class="text-primary control-label">CVLANs</label>
+									<input name="ctagId" id="{{endpointIndex}}" class="form-control input-sm ctag-id" value="">
 									<div class="help-block with-errors"></div>
 								</div>
+								<div class="checkbox">
+									<label>
+										<input id="{{endpointIndex}}" type="checkbox" class="untagged-id">
+										untagged
+									</label>
+								</div>				
 								{{/if}}
 								{{#if $eq serviceStory.topo "elan"}}
 								<div class="row">
@@ -448,52 +459,39 @@
 								<h3 id="component-title">
 									Class of Service Config
 								</h3>
-								{{#each cosCfg}}
-								<div class="container fluid-container">
-								<div class="media-body">
-									<label for="classOfServiceName" class="text-primary control-label">Class of Service</label>
-									<select id="classOfServiceName" class="form-control input-sm">
-										<option selected="default">{{classOfServiceName}}</option>
-										<option value="classOfServiceName">Interactive</option>
-										<option value="classOfServiceName">Business Critical</option>
-										<option value="classOfServiceName">Non Critical</option>
-									</select>
-								</div>
-								<div class="media-body">
-									
-									<label for="ingressCir" class="text-primary control-label">ingressCir</label>
-									<input name="ingressCir" id="ingressCir" class="form-control input-sm" value="{{ingressCir}}">
-									<div class="help-block with-errors"></div>
-								</div>
-								</div>
+								{{#each cosCfg in cosCfg}}
+								<!--TODO: CosCfg for eLAN-->
 								{{/each}}
 								</div>
 								{{/if}}
 							{{/each}}
 						</div>
 						<div class="row col-md-offset-1 col-md-4">
-							{{#each properties.innis}}
+							{{#each inni in endpoint.properties.innis}}
 								<h3 id="component-title">
 									INNI
 								</h3>
 
 								<div class="media-body">
-									<label for={{this.id}} class="text-primary control-label">Port</label>
-									<select id={{this.id}} class="form-control input-sm">
+									<label for="inni" class="text-primary control-label">Port</label>
+									<select name="inni" required id="{{endpointIndex}}" class="form-control input-sm inni-id">
 										<option disabled selected="default">Select...</option>
-										<option value="id">Device list here</option>
+										<!-- TODO: Port List here-->
+										<option value="5">5</option>
+										<option value="6">6</option>
 									</select>
 								</div>
 						
 								<div class="media-body">
-									<label for="sTag" class="text-primary control-label">Core VLAN</label>
-									<input name="sTag" id="sTag" class="form-control input-sm" value="">
+									<label for="stag" class="text-primary control-label">Core VLAN</label>
+									<input name="stag" required id="{{endpointIndex}}" class="form-control input-sm stag-id" value="">
 									<div class="help-block with-errors"></div>
 								</div>
 							{{/each}}
 						</div>
 					</form>
 				</div>
+			{{/let}}
 			{{/each}}
 			</div>
 			{{#if $eq serviceStory.topo "elan"}}
