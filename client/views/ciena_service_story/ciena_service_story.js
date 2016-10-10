@@ -1,18 +1,21 @@
+  import Clipboard from 'clipboard'
+    new Clipboard('.btn');
+
   var scosCfg = [{
-    "classOfServiceName": "Real Time",
+    "classOfServiceName": "RealTime",
     "ingressCir": 0
   }]
   var mcosCfg = [{
-    "classOfServiceName": "Real Time",
+    "classOfServiceName": "RealTime",
     "ingressCir": 0
   }, {
     "classOfServiceName": "Interactive",
     "ingressCir": 0
   }, {
-    "classOfServiceName": "Business Critical",
+    "classOfServiceName": "BusinessCritical",
     "ingressCir": 0
   }, {
-    "classOfServiceName": "Non Critical",
+    "classOfServiceName": "NonCritical",
     "ingressCir": 0
   }, ]
   var bws = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
@@ -204,7 +207,7 @@
       localServiceStory.endpoint = {}
       localServiceStory.endpoints = [{
         "properties": {
-          "device": "selectA",
+          "device": "select1",
           "cosId": "EVC",
           "unis": [{
             "id": "1",
@@ -216,7 +219,7 @@
         }
       }, {
         "properties": {
-          "device": "selectB",
+          "device": "select2",
           "cosId": "EVC",
           "unis": [{
             "id": "1",
@@ -228,7 +231,7 @@
         }
       }, {
         "properties": {
-          "device": "selectC",
+          "device": "select3",
           "cosId": "EVC",
           "unis": [{
             "id": "1",
@@ -288,11 +291,6 @@
   Template.CienaServiceStoryHeader.helpers({
     'serviceStory': function () {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpointsText = []
-      localServiceStory.endpoints.forEach(function (endpoint) {
-        localServiceStory.endpointsText.push(JSON.stringify(endpoint, null, 2))
-
-      }, this);
       return localServiceStory;
     },
     'bws': function () {
@@ -301,8 +299,8 @@
     'mcosCfgs': function () {
       return mcosCfg;
     },
-    'serviceStoryText': function () {
-      return JSON.stringify(Session.get("serviceStory"), null, 2);
+    'stringify': function(object){
+      return JSON.stringify(object, null, 2);
     }
   });
 
@@ -319,6 +317,25 @@
       }, this);
 
     },
+    'click .device-add': function (event, template) {
+      var localServiceStory = Session.get("serviceStory")
+      localServiceStory.endpoints.push(
+      {
+        "properties": {
+          "device": "select" + (parseInt(localServiceStory.endpoints.length) + 1) ,
+          "cosId": "EVC",
+          "unis": [{
+            "id": "1",
+            "cosCfg": scosCfg
+          }],
+          "innis": [{
+            "id": ""
+          }]
+        }
+      })
+
+      Session.set('serviceStory', localServiceStory);
+    },    
     'input #serviceName': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.forEach(function (endpoint) {
@@ -383,7 +400,11 @@
       localServiceStory.endpoints[event.currentTarget.id].properties.unis[0].ceVlanMap.vlans = event.currentTarget.value
       Session.set('serviceStory', localServiceStory);
     },    
-
+    'input .device-id': function (event, template) {
+      var localServiceStory = Session.get("serviceStory")
+      localServiceStory.endpoints[event.currentTarget.id].properties.device = event.currentTarget.value
+      Session.set('serviceStory', localServiceStory);
+    },   
     'input .stag-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints[event.currentTarget.id].properties.innis[0].stag = event.currentTarget.value
@@ -411,19 +432,64 @@
       }, this);
       Session.set('serviceStory', localServiceStory);
 
+    },    
+    'change #RealTime': function (event, template) {
+      var localServiceStory = Session.get("serviceStory")
+      localServiceStory.endpoints.forEach(function (endpoint) {
+        if (endpoint.properties.unis) {
+          endpoint.properties.unis.forEach(function (uni) {
+            uni.cosCfg[0].ingressCir = parseInt(event.currentTarget.value)
+          }, this)
+        }
+      }, this);
+      Session.set('serviceStory', localServiceStory);
     },
+    'change #Interactive': function (event, template) {
+      var localServiceStory = Session.get("serviceStory")
+      localServiceStory.endpoints.forEach(function (endpoint) {
+        if (endpoint.properties.unis) {
+          endpoint.properties.unis.forEach(function (uni) {
+            uni.cosCfg[1].ingressCir = parseInt(event.currentTarget.value)
+          }, this)
+        }
+      }, this);
+      Session.set('serviceStory', localServiceStory);
+    },    
+    'change #BusinessCritical': function (event, template) {
+      var localServiceStory = Session.get("serviceStory")
+      localServiceStory.endpoints.forEach(function (endpoint) {
+        if (endpoint.properties.unis) {
+          endpoint.properties.unis.forEach(function (uni) {
+            uni.cosCfg[2].ingressCir = parseInt(event.currentTarget.value)
+          }, this)
+        }
+      }, this);
+      Session.set('serviceStory', localServiceStory);
+    },    
+    'change #NonCritical': function (event, template) {
+      var localServiceStory = Session.get("serviceStory")
+      localServiceStory.endpoints.forEach(function (endpoint) {
+        if (endpoint.properties.unis) {
+          endpoint.properties.unis.forEach(function (uni) {
+            uni.cosCfg[3].ingressCir = parseInt(event.currentTarget.value)
+          }, this)
+        }
+      }, this);
+      Session.set('serviceStory', localServiceStory);
+    },    
     'change #cosID': function (e, t) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.cosId = "PCP"
       if (e.target.value == "PCP") {
-        localServiceStory.endpoints.forEach(function(endpoint){
+        localServiceStory.cosId = "PCP"
+        for (i = 0; i < localServiceStory.endpoints.length; ++i) {
           localServiceStory.endpoints[i].cosId = "PCP"
-          if (endpoint.unis) {
-            endpoint.unis.forEach(function (uni) {
-              uni.cosCfg = mcosCfg
-            }, this)
-          }          
-        })
+          if (localServiceStory.endpoints[i].properties.unis) {
+            for (index = 0; index < localServiceStory.endpoints[i].properties.unis.length; ++index) {
+              localServiceStory.endpoints[i].properties.unis[index].cosCfg = mcosCfg
+
+            }
+          }
+        }
         localServiceStory.cosCfg = mcosCfg
       }
       if (e.target.value == "EVC") {
