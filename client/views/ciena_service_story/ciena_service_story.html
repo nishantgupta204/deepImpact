@@ -379,9 +379,11 @@
 							</h3>
 							<div class="media-body">
 								<select id="{{endpointIndex}}" class="form-control input-sm device-id" default="">
-									<option disabled selected="EVC">{{endpoint.properties.device}}</option>
-										<!-- TODO: Device List here-->									
-									<option value="device1">Device list here</option>
+									<option disabled selected="null">Select an endpoint</option>
+										<!-- TODO: Device List here-->
+									{{#each device in deviceList}}
+									<option value="{{device.properties.hostname}}">{{device.properties.hostname}}</option>
+									{{/each}}
 								</select>
 							</div>
 						</div>
@@ -499,11 +501,11 @@
 
 			<div class="col-md-4">
 				<div class="row text-center">
-					<button data-clipboard-target="#{{endpoint.properties.device}}" type="button" class="btn btn-sm btn-success">Copy {{endpoint.properties.device}}</button>
+					<button data-clipboard-target="#clipboard{{@index}}" type="button" class="btn btn-sm btn-success">Copy {{endpoint.properties.device}}</button>
 				</div>
 
 				<div class="row">
-					<pre id="{{endpoint.properties.device}}">{{stringify endpoint}}</pre>
+					<pre id="clipboard{{@index}}">{{stringify endpoint}}</pre>
 				</div>
 			</div>
 			{{/each}}

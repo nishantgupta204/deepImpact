@@ -288,11 +288,26 @@
 
   // CienaServiceStoryHeader
 
+  Template.CienaServiceStoryHeader.created = function () {
+    Session.set('deviceList', {});
+
+    Meteor.call("mdso_getDevices", "raciena6x.resourceTypes.DeviceDetail", function (error, result) {
+      if (result) {
+        debugger
+        Session.set('deviceList', result);
+      }
+    });
+  };
+
   Template.CienaServiceStoryHeader.helpers({
     'serviceStory': function () {
       var localServiceStory = Session.get("serviceStory")
       return localServiceStory;
     },
+    'deviceList': function () {
+      var localDeviceList = Session.get("deviceList")
+      return localDeviceList;
+    },    
     'bws': function () {
       return bws;
     },

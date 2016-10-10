@@ -309,7 +309,11 @@ Meteor.methods({
 
 	'mdso_getProducts': function(product,query){
 	    console.log("Getting products for product:" + product);
-		var path = "/bpocore/market/api/v1/resources?productId=" + product + query
+		if (query){
+			var path = "/bpocore/market/api/v1/resources?productId=" + product + query
+		}else{
+			var path = "/bpocore/market/api/v1/resources?productId=" + product
+		}
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
