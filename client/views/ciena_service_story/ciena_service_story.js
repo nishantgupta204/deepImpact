@@ -69,7 +69,7 @@
             "cosCfg": scosCfg
           }],
           "innis": [{
-            "id": "5"
+            "id": ""
           }]
         }
       }]
@@ -89,7 +89,7 @@
             "cosCfg": scosCfg
           }],
           "innis": [{
-            "id": "5"
+            "id": ""
           }]
         }
       }]
@@ -148,7 +148,7 @@
             "cosCfg": scosCfg
           }],
           "innis": [{
-            "id": "5"
+            "id": ""
           }]
         }
       }, {
@@ -160,7 +160,7 @@
             "cosCfg": scosCfg
           }],
           "innis": [{
-            "id": "5"
+            "id": ""
           }]
         }
       }]
@@ -180,7 +180,7 @@
             "cosCfg": scosCfg
           }],
           "innis": [{
-            "id": "5"
+            "id": ""
           }]
         }
       }, {
@@ -192,7 +192,7 @@
             "cosCfg": scosCfg
           }],
           "innis": [{
-            "id": "5"
+            "id": ""
           }]
         }
       }]
@@ -211,7 +211,7 @@
             "cosCfg": scosCfg
           }],
           "innis": [{
-            "id": "5"
+            "id": ""
           }]
         }
       }, {
@@ -223,7 +223,7 @@
             "cosCfg": scosCfg
           }],
           "innis": [{
-            "id": "5"
+            "id": ""
           }]
         }
       }, {
@@ -235,7 +235,7 @@
             "cosCfg": scosCfg
           }],
           "innis": [{
-            "id": "5"
+            "id": ""
           }]
         }
       }]
@@ -287,7 +287,13 @@
 
   Template.CienaServiceStoryHeader.helpers({
     'serviceStory': function () {
-      return Session.get("serviceStory");
+      var localServiceStory = Session.get("serviceStory")
+      localServiceStory.endpointsText = []
+      localServiceStory.endpoints.forEach(function (endpoint) {
+        localServiceStory.endpointsText.push(JSON.stringify(endpoint, null, 2))
+
+      }, this);
+      return localServiceStory;
     },
     'bws': function () {
       return bws;
@@ -297,8 +303,7 @@
     },
     'serviceStoryText': function () {
       return JSON.stringify(Session.get("serviceStory"), null, 2);
-    },
-
+    }
   });
 
   Template.CienaServiceStoryHeader.events({
