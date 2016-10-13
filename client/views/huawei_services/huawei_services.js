@@ -32,14 +32,9 @@ Template.HuaweiServices.helpers({
 });
 
 Template.HuaweiServices.created = function () {
-	Meteor.call("mdso_getProductID", "rahuawei.resourceTypes.XvcFragment", function (error, result) {
+  Meteor.call("mdso_getServicesUnique", "rahuawei.resourceTypes.XvcFragment", function (error, result) {
     if (result) {
-      Session.set('xvcProduct', result);
-      Meteor.call("mdso_getServicesUnique", result.id, function (error, result2) {
-        if (result2) {
-          Session.set('services', result2);
-        }
-      });
+      Session.set('services', result);
     }
   });
 };

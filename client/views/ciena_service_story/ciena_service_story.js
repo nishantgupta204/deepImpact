@@ -143,7 +143,7 @@
       localServiceStory.cosCfg = scosCfg
       localServiceStory.endpoint = {}
       localServiceStory.endpoints = [{
-        "properties": {
+        "bpo":{"properties": {
           "device": "selectA",
           "cosId": "EVC",
           "unis": [{
@@ -153,8 +153,8 @@
           "innis": [{
             "id": ""
           }]
-        }
-      }, {
+        }}
+      }, {"bpo":{
         "properties": {
           "device": "selectZ",
           "cosId": "EVC",
@@ -165,7 +165,7 @@
           "innis": [{
             "id": ""
           }]
-        }
+      }}
       }]
       Session.set('serviceStory', localServiceStory);
     },
@@ -175,7 +175,7 @@
       localServiceStory.cosCfg = scosCfg
       localServiceStory.endpoint = {}
       localServiceStory.endpoints = [{
-        "properties": {
+        "bpo":{"properties": {
           "device": "selectA",
           "cosId": "EVC",
           "unis": [{
@@ -185,8 +185,8 @@
           "innis": [{
             "id": ""
           }]
-        }
-      }, {
+        }}
+      }, {"bpo":{
         "properties": {
           "device": "selectZ",
           "cosId": "EVC",
@@ -197,7 +197,7 @@
           "innis": [{
             "id": ""
           }]
-        }
+      }}
       }]
       Session.set('serviceStory', localServiceStory);
     },
@@ -205,8 +205,8 @@
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.topo = "elan"
       localServiceStory.endpoint = {}
-      localServiceStory.endpoints = [{
-        "properties": {
+      localServiceStory.endpoints = [
+        {"bpo":{"properties": {
           "device": "select1",
           "cosId": "EVC",
           "unis": [{
@@ -216,8 +216,8 @@
           "innis": [{
             "id": ""
           }]
-        }
-      }, {
+        }}
+      }, {"bpo":{
         "properties": {
           "device": "select2",
           "cosId": "EVC",
@@ -228,8 +228,8 @@
           "innis": [{
             "id": ""
           }]
-        }
-      }, {
+      }}
+      }, {"bpo":{
         "properties": {
           "device": "select3",
           "cosId": "EVC",
@@ -240,7 +240,7 @@
           "innis": [{
             "id": ""
           }]
-        }
+      }}
       }]
       Session.set('serviceStory', localServiceStory);
     }
@@ -273,8 +273,8 @@
         localServiceStory.evcID = "AVPxxxx"
       }
       localServiceStory.endpoints.forEach(function (endpoint) {
-      if (endpoint.properties.unis) {
-        endpoint.properties.unis.forEach(function (uni) {
+      if (endpoint.bpo.properties.unis) {
+        endpoint.bpo.properties.unis.forEach(function (uni) {
           uni.ceVlanMap = {"vlans":"",untagged:false}
 
         }, this)
@@ -293,7 +293,6 @@
 
     Meteor.call("mdso_getDevices", "raciena6x.resourceTypes.DeviceDetail", function (error, result) {
       if (result) {
-        debugger
         Session.set('deviceList', result);
       }
     });
@@ -307,7 +306,7 @@
     'deviceList': function () {
       var localDeviceList = Session.get("deviceList")
       return localDeviceList;
-    },    
+    },
     'bws': function () {
       return bws;
     },
@@ -316,6 +315,13 @@
     },
     'stringify': function(object){
       return JSON.stringify(object, null, 2);
+    },
+    'getCommands': function(object){
+      Meteor.call("mdso_getCommands", object, function (error, result) {
+        if (result) {
+          return result
+        }
+      });
     }
   });
 
@@ -323,19 +329,20 @@
     'click #cancelButton': function (e, t) {
       Session.set("serviceStory", {});
     },
-    'click .serviceSave': function (e, t) {
+    'click .service-save': function (e, t) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints.forEach(function (endpoint) {
-
-        // Iterate through the service objects and POST them
-
-      }, this);
-
+      for (index = 0; index < localServiceStory.endpoints.length; ++index) {
+        localServiceStory.endpoints[index].ui.result = true
+        Meteor.call("mdso_createCienaService", localServiceStory.endpoints[index].bpo, function (error, result) {
+          console.log(result)
+        })
+      }
+      Session.set('serviceStory', localServiceStory);
     },
     'click .device-add': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.push(
-      {
+      {"bpo":{
         "properties": {
           "device": "select" + (parseInt(localServiceStory.endpoints.length) + 1) ,
           "cosId": "EVC",
@@ -347,6 +354,7 @@
             "id": ""
           }]
         }
+      }
       })
 
       Session.set('serviceStory', localServiceStory);
@@ -354,8 +362,8 @@
     'input #serviceName': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.forEach(function (endpoint) {
-        endpoint.label = event.currentTarget.value
-        endpoint.properties.id = event.currentTarget.value
+        endpoint.bpo.label = event.currentTarget.value
+        endpoint.bpo.properties.id = event.currentTarget.value
       }, this);
       Session.set('serviceStory', localServiceStory);
 
@@ -363,13 +371,13 @@
     'change #classOfServiceName': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.forEach(function (endpoint) {
-        if (endpoint.properties.unis) {
-          endpoint.properties.unis.forEach(function (uni) {
+        if (endpoint.bpo.properties.unis) {
+          endpoint.bpo.properties.unis.forEach(function (uni) {
             uni.cosCfg[0].classOfServiceName = event.currentTarget.value
           }, this)
         }
-        if (endpoint.properties.ennis) {
-          endpoint.properties.ennis.forEach(function (enni) {
+        if (endpoint.bpo.properties.ennis) {
+          endpoint.bpo.properties.ennis.forEach(function (enni) {
             enni.cosCfg[0].classOfServiceName = event.currentTarget.value
           }, this)
         }
@@ -378,68 +386,74 @@
     },
     'change .untagged-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.unis[0].ceVlanMap.untagged = event.currentTarget.checked
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.unis[0].ceVlanMap.untagged = event.currentTarget.checked
       Session.set('serviceStory', localServiceStory);
     },    
     'input .l2cp-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.unis[0].tunnelMethod = event.currentTarget.value
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.unis[0].tunnelMethod = event.currentTarget.value
       Session.set('serviceStory', localServiceStory);
     },    
     'input .enni-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.ennis[0].id = event.currentTarget.value
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.ennis[0].id = event.currentTarget.value
       Session.set('serviceStory', localServiceStory);
     },    
-
     'input .tpid-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.ennis[0].tpid = event.currentTarget.value
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.ennis[0].tpid = event.currentTarget.value
       Session.set('serviceStory', localServiceStory);
-    },    
-
+    },
     'input .uni-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.unis[0].id = event.currentTarget.value
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.unis[0].id = event.currentTarget.value
       Session.set('serviceStory', localServiceStory);
-    },    
-
+    },
     'input .enni-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.ennis[0].id = event.currentTarget.value
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.ennis[0].id = event.currentTarget.value
       Session.set('serviceStory', localServiceStory);
-    },    
-
+    },
     'input .ctag-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.unis[0].ceVlanMap.vlans = event.currentTarget.value
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.unis[0].ceVlanMap.vlans = event.currentTarget.value
       Session.set('serviceStory', localServiceStory);
-    },    
+    },
     'input .device-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.device = event.currentTarget.value
-      Session.set('serviceStory', localServiceStory);
-    },   
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.device = event.currentTarget.value
+
+      Meteor.call("mdso_getCienaInterfaces", event.currentTarget.value, function (error, result) {
+        if (result) {
+          localServiceStory.endpoints[event.currentTarget.id].ui = result
+          localServiceStory.endpoints[event.currentTarget.id].bpo.properties.innis[0].id = localServiceStory.endpoints[event.currentTarget.id].ui.innis[0]      
+          Session.set('serviceStory', localServiceStory);
+        } else{
+          alert("Failed to retrieve")
+        }
+      });
+    },
     'input .stag-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.innis[0].stag = event.currentTarget.value
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.innis[0].stag = parseInt(event.currentTarget.value)
       Session.set('serviceStory', localServiceStory);
-    },    
+    },
     'input .inni-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].properties.innis[0].id = event.currentTarget.value
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.innis[0].id = event.currentTarget.value
       Session.set('serviceStory', localServiceStory);
-    },        
+    },
+
     'change #ingressCir': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.forEach(function (endpoint) {
-        if (endpoint.properties.unis) {
-          endpoint.properties.unis.forEach(function (uni) {
+        if (endpoint.bpo.properties.unis) {
+          endpoint.bpo.properties.unis.forEach(function (uni) {
             uni.cosCfg[0].ingressCir = parseInt(event.currentTarget.value)
           }, this)
         }
-        if (endpoint.properties.ennis) {
-          endpoint.properties.ennis.forEach(function (enni) {
+        if (endpoint.bpo.properties.ennis) {
+          endpoint.bpo.properties.ennis.forEach(function (enni) {
             enni.cosCfg[0].ingressCir = parseInt(event.currentTarget.value)
           }, this)
         }
@@ -451,8 +465,8 @@
     'change #RealTime': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.forEach(function (endpoint) {
-        if (endpoint.properties.unis) {
-          endpoint.properties.unis.forEach(function (uni) {
+        if (endpoint.bpo.properties.unis) {
+          endpoint.bpo.properties.unis.forEach(function (uni) {
             uni.cosCfg[0].ingressCir = parseInt(event.currentTarget.value)
           }, this)
         }
@@ -462,8 +476,8 @@
     'change #Interactive': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.forEach(function (endpoint) {
-        if (endpoint.properties.unis) {
-          endpoint.properties.unis.forEach(function (uni) {
+        if (endpoint.bpo.properties.unis) {
+          endpoint.bpo.properties.unis.forEach(function (uni) {
             uni.cosCfg[1].ingressCir = parseInt(event.currentTarget.value)
           }, this)
         }
@@ -473,8 +487,8 @@
     'change #BusinessCritical': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.forEach(function (endpoint) {
-        if (endpoint.properties.unis) {
-          endpoint.properties.unis.forEach(function (uni) {
+        if (endpoint.bpo.properties.unis) {
+          endpoint.bpo.properties.unis.forEach(function (uni) {
             uni.cosCfg[2].ingressCir = parseInt(event.currentTarget.value)
           }, this)
         }
@@ -484,8 +498,8 @@
     'change #NonCritical': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.forEach(function (endpoint) {
-        if (endpoint.properties.unis) {
-          endpoint.properties.unis.forEach(function (uni) {
+        if (endpoint.bpo.properties.unis) {
+          endpoint.bpo.properties.unis.forEach(function (uni) {
             uni.cosCfg[3].ingressCir = parseInt(event.currentTarget.value)
           }, this)
         }
@@ -498,10 +512,9 @@
         localServiceStory.cosId = "PCP"
         for (i = 0; i < localServiceStory.endpoints.length; ++i) {
           localServiceStory.endpoints[i].cosId = "PCP"
-          if (localServiceStory.endpoints[i].properties.unis) {
-            for (index = 0; index < localServiceStory.endpoints[i].properties.unis.length; ++index) {
-              localServiceStory.endpoints[i].properties.unis[index].cosCfg = mcosCfg
-
+          if (localServiceStory.endpoints[i].bpo.properties.unis) {
+            for (index = 0; index < localServiceStory.endpoints[i].bpo.properties.unis.length; ++index) {
+              localServiceStory.endpoints[i].bpo.properties.unis[index].cosCfg = mcosCfg
             }
           }
         }
@@ -511,9 +524,9 @@
         localServiceStory.cosId = "EVC"
         for (i = 0; i < localServiceStory.endpoints.length; ++i) {
           localServiceStory.endpoints[i].cosId = "EVC"
-          if (localServiceStory.endpoints[i].properties.unis) {
-            for (index = 0; index < localServiceStory.endpoints[i].properties.unis.length; ++index) {
-              localServiceStory.endpoints[i].properties.unis[index].cosCfg = scosCfg
+          if (localServiceStory.endpoints[i].bpo.properties.unis) {
+            for (index = 0; index < localServiceStory.endpoints[i].bpo.properties.unis.length; ++index) {
+              localServiceStory.endpoints[i].bpo.properties.unis[index].cosCfg = scosCfg
 
             }
           }
@@ -524,9 +537,9 @@
         localServiceStory.cosId = "DSCP"
         for (i = 0; i < localServiceStory.endpoints.length; ++i) {
           localServiceStory.endpoints[i].cosId = "DSCP"
-          if (localServiceStory.endpoints[i].properties.unis) {
+          if (localServiceStory.endpoints[i].bpo.properties.unis) {
             for (index = 0; index < localServiceStory.endpoints[i].properties.unis.length; ++index) {
-              localServiceStory.endpoints[i].properties.unis[index].cosCfg = mcosCfg
+              localServiceStory.endpoints[i].bpo.properties.unis[index].cosCfg = mcosCfg
             }
           }
         }

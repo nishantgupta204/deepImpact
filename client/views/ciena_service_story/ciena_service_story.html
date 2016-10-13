@@ -105,13 +105,25 @@
 
 <template name="CienaServiceStoryCEPipe">
 	<div class="panel panel-info {{#if $eq serviceStory.type "CE"}}{{else}}hidden{{/if}}">
-
 		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
 			<h3>ePIPE Selection</h3>
 		</div>
 		<div class="panel panel-body text-center">
 			<div class="col-md-6">
-
+				<div class="jumbotron ">
+					<div id="content" class="container ">
+						<h1 id="component-title">
+						</h1>
+						<p id="jumbotron-text">
+							non ePIPE traverses a switched core
+						</p>
+						<p id="jumbotron-button">
+							<a class="btn btn-lg btn-primary pipeFalse" role="button">No »</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
 				<div class="jumbotron text-center">
 					<div id="content" class="container text-center">
 						<h1 id="component-title">
@@ -125,27 +137,7 @@
 						</p>
 					</div>
 				</div>
-
-
 			</div>
-			<div class="col-md-6">
-
-				<div class="jumbotron ">
-					<div id="content" class="container ">
-						<h1 id="component-title">
-
-						</h1>
-						<p id="jumbotron-text">
-							non ePIPE traverses a switched core
-						</p>
-						<p id="jumbotron-button">
-							<a class="btn btn-lg btn-primary pipeFalse" role="button">No »</a>
-						</p>
-					</div>
-				</div>
-
-			</div>
-
 		</div>
 	</div>
 </template>
@@ -172,8 +164,8 @@
 					</div>
 				</div>
 			</div>
+			{{#unless $eq serviceStory.pipe "true"}}
 			<div class="col-md-4 text-center">
-
 				<div class="jumbotron text-center">
 					<div id="content" class="container text-center">
 						<h1 id="component-title">
@@ -188,6 +180,7 @@
 				</div>
 
 			</div>
+			{{/unless}}
 			<div class="col-md-4">
 				<div class="jumbotron text-center">
 					<div id="content" class="container text-center">
@@ -208,7 +201,6 @@
 
 <template name="CienaServiceStoryBundling">
 	<div class="panel panel-info">
-
 		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
 			<h3>UNI Bundling Option Selection</h3>
 		</div>
@@ -380,15 +372,14 @@
 							<div class="media-body">
 								<select id="{{endpointIndex}}" class="form-control input-sm device-id" default="">
 									<option disabled selected="null">Select an endpoint</option>
-										<!-- TODO: Device List here-->
 									{{#each device in deviceList}}
-									<option value="{{device.properties.hostname}}">{{device.properties.hostname}}</option>
+									<option value="{{device.properties.device}}">{{device.properties.hostname}}</option>
 									{{/each}}
 								</select>
 							</div>
 						</div>
 						<div class="row col-md-offset-1 col-md-4">
-							{{#each enni in endpoint.properties.ennis}}
+							{{#each enni in endpoint.bpo.properties.ennis}}
 							<h3 id="component-title">
 								ENNI
 							</h3>
@@ -396,22 +387,24 @@
 							<div class="media-body">
 								<label for="enniId" class="text-primary control-label ">Port</label>
 								<select name="enniId" id="{{endpointIndex}}" class="form-control input-sm enni-id">
-										<option disabled selected="default">Select...</option>
-										<!-- TODO: Port List here-->																			
-										<option value="1">1</option>
-										<option value="2">2</option>
-									</select>
+									<option disabled selected="default">Select...</option>
+									<!-- TODO: Port List here-->
+									{{#each uniport in endpoint.ui.unis}}
+									<option value="{{uniport}}">{{uniport}}</option>
+									{{/each}}
+								</select>
 							</div>
 							<div class="media-body">
 								<label for="tpidId" class="text-primary control-label">Ethertype</label>
 								<select name="tpiId" id="{{endpointIndex}}" class="form-control input-sm tpid-id">
-										<option value="8100">8100</option>
-										<option value="88A8">88A8</option>
-										<option value="9100">9100</option>
-									</select>
+									<option value="8100">8100</option>
+									<option value="88A8">88A8</option>
+									<option value="9100">9100</option>
+								</select>
 							</div>
 
-							{{/each}} {{#each uni in endpoint.properties.unis}}
+							{{/each}} 
+							{{#each uni in endpoint.bpo.properties.unis}}
 							<h3 id="component-title">
 								UNI
 							</h3>
@@ -419,11 +412,12 @@
 							<div class="media-body">
 								<label for="uniId" class="text-primary control-label">Port</label>
 								<select name="uniId" id="{{endpointIndex}}" class="form-control input-sm uni-id">
-										<option disabled selected="default">Select...</option>
-										<!-- TODO: Port List here-->																			
-										<option value="1">1</option>
-										<option value="2">2</option>
-									</select>
+									<option disabled selected="default">Select...</option>
+									<!-- TODO: Port List here-->
+									{{#each uniport in endpoint.ui.unis}}
+									<option value="{{uniport}}">{{uniport}}</option>
+									{{/each}}
+								</select>
 							</div>
 							{{#if $eq serviceStory.topo "eaccess"}}
 							<div class="media-body">
@@ -457,8 +451,8 @@
 							</div>
 							{{/if}} {{/each}}
 						</div>
-						<div class="row col-md-offset-1 col-md-4">
-							{{#each inni in endpoint.properties.innis}}
+						<div class="row col-md-offset-1 col-md-3">
+							{{#each inni in endpoint.bpo.properties.innis}}
 							<h3 id="component-title">
 								INNI
 							</h3>
@@ -466,10 +460,9 @@
 							<div class="media-body">
 								<label for="inni" class="text-primary control-label">Port</label>
 								<select name="inni" required id="{{endpointIndex}}" class="form-control input-sm inni-id">
-										<option disabled selected="default">Select...</option>
-										<!-- TODO: Port List here-->
-										<option value="5">5</option>
-										<option value="6">6</option>
+									{{#each inniport in endpoint.ui.innis}}
+									<option value="{{inniport}}">{{inniport}}</option>
+									{{/each}}
 									</select>
 							</div>
 
@@ -480,12 +473,27 @@
 							</div>
 							{{/each}}
 						</div>
+						<div class="col-md-1">
+							{{#each inni in endpoint.bpo.properties.innis}}
+							<div class="text-center">
+							<h4 id="component-title">
+								result
+							</h4>
+							</div>
+							<div class="text-center">
+							<button id= "result{{endpointIndex}}" type="button" class="btn btn-{{#if endpoint.ui.result}}success{{else}}default{{/if}} disabled" aria-label="Left Align">
+							{{#unless endpoint.ui.result}}...{{/unless}}
+							<span class="glyphicon {{#if endpoint.ui.result}}glyphicon-ok{{/if}}" aria-hidden="true"></span>
+							</button>
+							</div>
+							{{/each}}
+						</div>						
 					</form>
 				</div>
 				{{/let}} {{/each}}
 			</div>
 			{{#if $eq serviceStory.topo "elan"}}
-			<tr class="row">
+			<tr class="row text-center">
 				<button type="button" class="btn btn-success device-add">New</button>
 			</tr>
 			{{/if}}
@@ -494,24 +502,20 @@
 		<div class="text-center">
 			<button type="button" class="btn btn-lg btn-success service-save">Save</button>
 		</div>
-
 		<div class="panel panel-body">
-
 			{{#each endpoint in serviceStory.endpoints}}
-
 			<div class="col-md-4">
 				<div class="row text-center">
-					<button data-clipboard-target="#clipboard{{@index}}" type="button" class="btn btn-sm btn-success">Copy {{endpoint.properties.device}}</button>
+					<button data-clipboard-target="#clipboard{{@index}}" type="button" class="btn btn-sm btn-success">Copy</button>
 				</div>
-
 				<div class="row">
-					<pre id="clipboard{{@index}}">{{stringify endpoint}}</pre>
+					<pre id="clipboard{{@index}}">{{stringify endpoint.bpo}}</pre>
+				</div>
+				<div class="row">
+					<p>{{getCommands endpoint.bpo}}</p>
 				</div>
 			</div>
 			{{/each}}
-
-
 		</div>
-
 	</div>
 </template>

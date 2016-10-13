@@ -45,7 +45,6 @@ Meteor.methods({
 		var authToken = mdso_getHash("PATCH", path);
 		try {
 			var body = {"properties":hostname.properties}
-			console.log(body)
 			var response = HTTP.call('PATCH', url,
 				{
 					headers: { "Content-Type": "application/json", "Authorization": authToken },
@@ -106,6 +105,11 @@ Meteor.methods({
 			throw new Meteor.Error("Error deleting service id:" + service.id + " error: " + e);
 		}
     },
+	'mdso_getCommands': function (service){
+
+
+
+	},
 	'mdso_postResource' :function(domain, product, body){
 		var tenantId =  Meteor.call("mdso_getDomain", domain);
 		console.log("Successfully retrieved tenantID:" + tenantId.id);
@@ -116,7 +120,9 @@ Meteor.methods({
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("POST", path);
 		var url = appSettings.MDSO_server + path
-
+		if (!body.label){
+			body.label = "undefined"
+		}
 		body.productId = productId.id
 		body.tenantId = tenantId.id
 
@@ -181,8 +187,6 @@ Meteor.methods({
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("POST", path);
 		var url = appSettings.MDSO_server + path
-		console.log("url: " + url);
-		console.log("Authorization: " + authToken);
 
 		var body = {"label":hostname,"productId":productDeviceId,"tenantId":tenantID,"properties":{
 		"typeGroup":"/typeGroups/Ciena6x","authentication":{"cli":{"username":"su","password":"wwp"}},"connection":{"hostname":hostname,"cli":{"hostport":22}}},
@@ -217,8 +221,6 @@ Meteor.methods({
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("POST", path);
 		var url = appSettings.MDSO_server + path
-		console.log("url: " + url);
-		console.log("Authorization: " + authToken);
 
 		var body = {"label":hostname,"productId":productDeviceId,"tenantId":tenantID,"properties":{"typeGroup":"/typeGroups/Huawei","authentication":{"cli":{"username":"devops","password":"freelunch"}},"connection":{"hostname":hostname,"cli":{"hostport":22}}},"providerResourceId":"","discovered":false,"orchState":"unkown","reason":"","autoClean":true}
 		try {
@@ -241,8 +243,6 @@ Meteor.methods({
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("DELETE", path);
 		var url = appSettings.MDSO_server + path
-		console.log("url: " + url);
-		console.log("Authorization: " + authToken);
 		try {
 			var response = HTTP.call('DELETE', url,
 				{
@@ -262,15 +262,12 @@ Meteor.methods({
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
-		console.log("url: " + url);
-		console.log("Authorization: " + authToken);
 		try {
 			var response = HTTP.call('GET', url,
 				{
 					headers: { "Content-Type": "application/json", "Authorization": authToken },
 					npmRequestOptions: { rejectUnauthorized: false }
 				});
-			console.log(JSON.stringify(response, null, 2));
 			var content = JSON.parse(response.content);
 			var did = content.items[0].id;
 			console.log("MDSO Domain " + domain + " has id: " + did);
@@ -280,23 +277,65 @@ Meteor.methods({
 			throw new Meteor.Error("Error getting id for MDSO domain: " + domain + " error: " + e);
 		}
 	},
-	'mdso_getProductID': function(product){
-	    console.log("Getting Product ID for product:" + product);
-		var path = "/bpocore/market/api/v1/products?includeInactive=false&q=resourceTypeId:" + product
+	'mdso_createCienaService': function(service){
+		console.log("Creating Ciena Service for:" + service);		
+		var devsplit = service.properties.device.split("_");
+		service.properties.device = devsplit[2]
+		result = Meteor.call("mdso_postResource", "Ciena6x", "raciena6x.resourceTypes.XvcFragment", service)
+		return result
+	},
+	'mdso_getCienaInterfaces': function(hostname){
+		console.log("Getting Ciena Interfaces for:" + hostname);
+		var productId = Meteor.call("mdso_getProductID","raciena6x.resourceTypes.Interface");
+		productId = productId.id
+		console.log("Successfully retrieved productId:" + productId);
+		var res = hostname.split("_");
+		var path = "/bpocore/market/api/v1/resources?productId=" + productId + "&q=properties.device:" + res[2]
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
-		console.log("url: " + url);
-		console.log("Authorization: " + authToken);
-
 		try {
 			var response = HTTP.call('GET', url,
 				{
 					headers: { "Content-Type": "application/json", "Authorization": authToken },
 					npmRequestOptions: { rejectUnauthorized: false }
 				});
+			var ports = JSON.parse(response.content);
+			ports = ports.items
+			var devicePortLength = ports.length;
+			console.log("Resource " + res[2] + " has " + devicePortLength + " ports");
+			response =  {}
+			response.innis = []
+			response.unis = []
+			for (index = 0; index < ports.length; ++index) {
+              if (ports[index].properties.mgtPort == true){
+				  if (ports[index].properties.LinkStateOper == "Enabled"){
+				  	response.innis.push(ports[index].properties.port)
+				  }
+			  }else{
+				  response.unis.push(ports[index].properties.port)
+			  }
 
-			console.log(JSON.stringify(response, null, 2));
+            }
+			return response
+		
+		} catch (e) {
+			console.log("Error getting ports for device: " + hostname + " error: " + e);
+			throw new Meteor.Error("Error getting ports for device: " + hostname + " error: " + e);
+		}
+	},
+	'mdso_getProductID': function(product){
+	    console.log("Getting Product ID for product:" + product);
+		var path = "/bpocore/market/api/v1/products?includeInactive=false&q=resourceTypeId:" + product
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("GET", path);
+		var url = appSettings.MDSO_server + path
+		try {
+			var response = HTTP.call('GET', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false }
+				});
 			var content = JSON.parse(response.content);
 			var did = content.items[0].id;
 			console.log("MDSO Domain " + product + " has device product id: " + did);
@@ -306,7 +345,31 @@ Meteor.methods({
 			throw new Meteor.Error("Error getting id for MDSO Product: " + product + " error: " + e);
 		}
 	},
-
+	'mdso_getResourcesByResourceTypeId': function(resourceTypeId,query){
+	    console.log("Getting resources for resourceTypeId:" + resourceTypeId);
+		if (query){
+			var path = "/bpocore/market/api/v1/resources?resourceTypeId=" + resourceTypeId + query
+		}else{
+			var path = "/bpocore/market/api/v1/resources?resourceTypeId=" + resourceTypeId
+		}
+		var appSettings = AppSettings.findOne();
+		var authToken = mdso_getHash("GET", path);
+		var url = appSettings.MDSO_server + path
+		try {
+			var response = HTTP.call('GET', url,
+				{
+					headers: { "Content-Type": "application/json", "Authorization": authToken },
+					npmRequestOptions: { rejectUnauthorized: false }
+				});
+			var content = JSON.parse(response.content);
+			var did = content.items.length;
+			console.log("resourceTypeId " + resourceTypeId + " has " + did + " products");
+			return content.items;
+		} catch (e) {
+			console.log("Error getting mdso_getResourcesByResourceTypeId: " + resourceTypeId + " error: " + e);
+			throw new Meteor.Error("Error getting mdso_getResourcesByResourceTypeId: " + resourceTypeId + " error: " + e);
+		}
+	},
 	'mdso_getProducts': function(product,query){
 	    console.log("Getting products for product:" + product);
 		if (query){
@@ -317,16 +380,12 @@ Meteor.methods({
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
-		console.log("url: " + url);
-		console.log("Authorization: " + authToken);
 		try {
 			var response = HTTP.call('GET', url,
 				{
 					headers: { "Content-Type": "application/json", "Authorization": authToken },
 					npmRequestOptions: { rejectUnauthorized: false }
 				});
-
-			console.log(JSON.stringify(response, null, 2));
 			var content = JSON.parse(response.content);
 			var did = content.items.length;
 			console.log("Resource " + product + " has " + did + " products");
@@ -336,51 +395,26 @@ Meteor.methods({
 			throw new Meteor.Error("Error getting mdso_getProducts: " + product + " error: " + e);
 		}
 	},
-
-	'mdso_getProductsByLabel': function(label, product){
-	    console.log("Getting Service:" + label + " for product:" + product);
-		var prodID =  Meteor.call("mdso_getProductID", product);
-		var productID = prodID.id + "&q=label:" + label
-		var products =  Meteor.call("mdso_getProducts", productID);
-		console.log("Products with label " + label + ":\n" + JSON.stringify(products, null, 2));
-
-		var did = products.length;
-		console.log("Resource " + product + " has " + did + " unique products");
-		return products;
-	},
-	'mdso_getServicesUnique': function(product){
-	    console.log("Getting Unique Services list:" + product + " with property: label");
-		var path = "/bpocore/market/api/v1/resources?productId=" + product
-		var appSettings = AppSettings.findOne();
-		var authToken = mdso_getHash("GET", path);
-		var url = appSettings.MDSO_server + path
-		console.log("url: " + url);
-		console.log("Authorization: " + authToken);
-		try {
-			var response = HTTP.call('GET', url,
-				{
-					headers: { "Content-Type": "application/json", "Authorization": authToken },
-					npmRequestOptions: { rejectUnauthorized: false }
-			});
-			var services = [];
-			var content = JSON.parse(response.content);
-			content = content.items
-            content.forEach(function(item){
-                var searchID = {"id":item.label}
-                var index = services.findIndex(services => services.id==item.label)
-                if (index === -1){
-                    services.push(searchID);
-                }
-            });
-			console.log(JSON.stringify(response, null, 2));
-			console.log("services:" + JSON.stringify(services, null, 2));
-			var did = services.length;
-			console.log("Resource " + product + " has " + did + " unique products");
-			return services;
-		} catch (e) {
-			console.log("Error getting mdso_getServicesUnique: " + product + " error: " + e);
-			throw new Meteor.Error("Error getting mdso_getServicesUnique: " + product + " error: " + e);
-		}
+	'mdso_getServicesUnique': function(resourceTypeId){
+	    console.log("Getting Unique Services list:" + resourceTypeId);
+		var response = Meteor.call('mdso_getResourcesByResourceTypeId',resourceTypeId)
+		var services = [];
+		response.forEach(function(item){
+			console.log(item)
+			if (!item.label){
+				item.label = "undefined"
+			}
+			var index = services.findIndex(services => services.label==item.label)
+			if (index === -1){
+				services.push({"label":item.label,"count":1});
+			}else{
+				services[index].count = services[index].count +1
+			}
+		});
+		console.log("services:" + JSON.stringify(services, null, 2));
+		var did = services.length;
+		console.log("Resource " + resourceTypeId + " has " + did + " unique resources");
+		return services;
 	},
 
 	'mdso_getProductsByName': function(name){
@@ -395,8 +429,6 @@ Meteor.methods({
 		var appSettings = AppSettings.findOne();
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
-		console.log("url: " + url);
-		console.log("Authorization: " + authToken);
 		try {
 			var response = HTTP.call('GET', url,
 				{
