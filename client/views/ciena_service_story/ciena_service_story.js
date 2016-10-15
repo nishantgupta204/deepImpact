@@ -338,6 +338,8 @@
         })
       }
       Session.set('serviceStory', localServiceStory);
+      Session.set('serviceID',{"label":Session.get('serviceStory').endpoints[0].bpo.label});
+			Router.go('ciena_service_detail', {id : Session.get('serviceStory').endpoints[0].bpo.label});
     },
     'click .device-add': function (event, template) {
       var localServiceStory = Session.get("serviceStory")

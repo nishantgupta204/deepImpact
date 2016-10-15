@@ -25,12 +25,14 @@ Template.CienaDevices.helpers({
 });
 
 Template.CienaDevices.created = function() {
+  Meteor.setInterval(() => {    
     Meteor.call("mdso_getDevices", "raciena6x.resourceTypes.Device", function(error, result) {
         if (result) {
             Session.set('devices', result)
         }
 
     });
+  },5000)
 
 };
 

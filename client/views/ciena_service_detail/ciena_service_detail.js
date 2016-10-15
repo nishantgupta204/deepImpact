@@ -3,13 +3,14 @@ Template.CienaServiceDetail.rendered = function () {
 };
 
 Template.CienaServiceDetail.events({
-  'click .service-delete': function (event, Ciena) {
+  'click .services-delete': function (event, target) {
     alert(JSON.stringify(this))
     $('#serviceDeleteConfirmModal').modal('show');
   },
-  'click .endpoint-remove': function (event, Ciena) {
-    Meteor.call("mdso_removeEndpoint", this, function (error, result) {
-      Router.go('ciena_services');
+  'click .endpoint-remove': function (event, target) {
+    var localservice = Session.get("service")
+    delService = localservice[event.currentTarget.id]
+    Meteor.call("mdso_removeEndpoint", delService, function (error, result) {
     });
   }
 });
@@ -20,20 +21,28 @@ Template.CienaServiceDetail.helpers({
   },
   'service': function () {
     return Session.get("service");
-  },
-  orchStateIs: function (orchState) {
-    return this.orchState === orchState;
-  },
+  }
 });
 
 Template.CienaServiceDetail.created = function () {
   var localserviceID = Session.get("serviceID")
-  var service = new Object();
-  Meteor.call("mdso_getResourcesByResourceTypeId",  "raciena6x.resourceTypes.XvcFragment", "&q=label:" + localserviceID.label, function (error, result) {
+  Meteor.call("mdso_getResourcesByResourceTypeId", "raciena6x.resourceTypes.XvcFragment", "&q=label:" + localserviceID.label, function (error, result) {
     if (result) {
       Session.set('service', result);
     }
   });
+  Meteor.setInterval(() => {
+    var localserviceID = Session.get("serviceID")
+    Meteor.call("mdso_getResourcesByResourceTypeId", "raciena6x.resourceTypes.XvcFragment", "&q=label:" + localserviceID.label, function (error, result) {
+      if (result) {
+        Session.set('service', result);
+        if (result.length == 0){
+          Session.set('service', {});
+          Router.go('ciena_services', {});
+        }
+      }
+    });
+  }, 5000);
 };
 
 Template.serviceDeleteConfirmModal.events({

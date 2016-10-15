@@ -311,14 +311,14 @@
 									<option value="DSCP">DSCP - MCOS</option>
 								</select>
 						</div>
-						{{/if}} {{#unless $eq serviceStory.topo "elan"}}
+						{{/if}} 
+						{{#unless $eq serviceStory.topo "elan"}}
 
 						<div class="col-md-3 text-center">
 
 							<tr>
 								<label class="text-primary">Class of Service Config</label>
 							</tr>
-
 							<form class="form-inline">
 								<div class="form-group">
 									{{#if $eq serviceStory.cosId "EVC"}}
@@ -331,7 +331,8 @@
 										{{#each bw in bws}}
 										<option value="{{bw}}">{{bw}}</option>
 										{{/each}}
-									</select> {{else}} {{#each cosCfg in serviceStory.cosCfg}}
+									</select> {{else}} 
+									{{#each cosCfg in serviceStory.cosCfg}}
 									<tr>
 										<label for="{{cosCfg.classOfServiceName}}" class="text-primary control-label">{{cosCfg.classOfServiceName}}</label>
 										<select id="{{cosCfg.classOfServiceName}}" class="form-control input-sm">
@@ -341,7 +342,8 @@
 									</select>
 									</tr>
 
-									{{/each}} {{/if}}
+									{{/each}} 
+									{{/if}}
 								</div>
 							</form>
 						</div>
@@ -388,7 +390,6 @@
 								<label for="enniId" class="text-primary control-label ">Port</label>
 								<select name="enniId" id="{{endpointIndex}}" class="form-control input-sm enni-id">
 									<option disabled selected="default">Select...</option>
-									<!-- TODO: Port List here-->
 									{{#each uniport in endpoint.ui.unis}}
 									<option value="{{uniport}}">{{uniport}}</option>
 									{{/each}}
@@ -413,7 +414,6 @@
 								<label for="uniId" class="text-primary control-label">Port</label>
 								<select name="uniId" id="{{endpointIndex}}" class="form-control input-sm uni-id">
 									<option disabled selected="default">Select...</option>
-									<!-- TODO: Port List here-->
 									{{#each uniport in endpoint.ui.unis}}
 									<option value="{{uniport}}">{{uniport}}</option>
 									{{/each}}
@@ -487,7 +487,7 @@
 							</button>
 							</div>
 							{{/each}}
-						</div>						
+						</div>
 					</form>
 				</div>
 				{{/let}} {{/each}}

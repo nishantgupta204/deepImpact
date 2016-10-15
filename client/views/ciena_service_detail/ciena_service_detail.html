@@ -1,73 +1,123 @@
 <template name="CienaServiceDetail">
-  <div class="page-container container" id="content">
-    <div class="row" id="title_row">
-      <div class="col-md-12">
-        <h2 id="page_title" class="pull-left">
-          Ciena Service {{serviceID.id}}
-          <button type="button" class="btn btn-danger services-delete">Delete All</button>
-        </h2>
-        <br>
-        <h3 id="page_add" class="pull-right">
-          <button type="button" class="btn btn-success endpoint-add">Add Endpoint</button>
-        </h3>
-        <div id="page_menu" class="pull-right">
+  <div class="page-container container col-md-10 col-md-offset-1" id="content">
+
+    <div class="panel panel-info">
+      <div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
+        <h3>General Information</h3>
+      </div>
+
+
+      <div class="panel panel-body text-center">
+        <div class="col-md-12">
+          <div class="panel-body">
+            <form id="createServiceForm" role="form" data-toggle="validator">
+              <div class="col-md-3 form-group">
+                <label for="customerName" class="text-primary control-label">Customer ID</label>
+                <input name="customerName" id="customerName" class="form-control input-sm" value="" disabled>
+                <div class="help-block with-errors"></div>
+              </div>
+              <div class="col-md-3 form-group">
+                <label for="serviceName" class="text-primary control-label">Service Name</label>
+                <input name="serviceName" id="serviceName" class="form-control input-sm" value="{{serviceID.label}}" disabled>
+                <div class="help-block with-errors"></div>
+              </div>
+
+              <button type="button" class="btn btn-danger services-delete">Delete All</button>
+              <button type="button" class="btn btn-success endpoint-add">Add Endpoint</button>
+
+            </form>
+          </div>
         </div>
-        <div class="container-fluid">
-          <table class="table table-striped table-responsive">
-            <tbody>
-              {{#each service}}
-              <tr class="service-row">
-                <td class="col-sm-8 col-md-6">
+      </div>
+      <div id="panelTitle" class="panel-heading" style="overflow: hidden;">
+        <h3>Endpoint Information</h3>
+      </div>
+      <div class="panel panel-body text-center">
+        <div class="row col-md-12">
+          {{#each serviceInstance in service}} {{#let endpointIndex=@index}}
+          <div class="row row-bordered">
+            <form id="endpoints" role="form" data-toggle="validator">
+              <div class="row col-md-3">
+                <div class="row">
+
+                  <h3>
+                    Service Details
+                  </h3>
+                  <p class="small">ServiceId: {{serviceInstance.id}}</p>
+                  <p class="media-heading">Class of Service Id :{{serviceInstance.properties.cosId}}</p>
+                  <h5 class="media-heading"> Created in BP: {{#unless discovered}}
+                    <span class="bg-success">Yes </span> {{else}}
+                    <span class="bg-danger">No </span>
+                    <button type="button" class="btn btn-sm btn-success">Set to Yes</button> {{/unless}}
+                  </h5>
+                  <h5 class="media-heading"> Orch State:{{#unless $eq serviceInstance.orchState "active"}}
+                    <span class="bg-danger">{{serviceInstance.orchState}} </span> {{else}}
+                    <span class="bg-success">{{serviceInstance.orchState}} </span> {{/unless}}
+                  </h5>
+                </div>
+                <div class="row">
+                  <h3>
+                    Device Details
+                  </h3>
                   <div class="media-body">
-                    <h4 class="media-heading">Service ID: {{id}} </h4>
-                    <h4 class="media-heading">Service Name: {{properties.id}}</h4>
-                    <h4 class="media-heading">ID: {{properties.device}}</h4>
-                    <h4 class="media-heading">Device: {{details.label}}</h4>
-                    <h4 class="media-heading">INNIs</h4>
-                    {{#each properties.nnis}}
-                    <h5 class="media-heading"> <span class="media-heading"> port:  </span><span class="label label-primary">{{id}} </span></h5>
-                    <ul>
-                      {{#if stag}}
-                      <li><span class="media-heading"> stag:  </span><span class="label label-success">{{stag}} </span></li>{{/if}}
-                    </ul>
-                    {{/each}}
-                    <h4 class="media-heading">UNIs</h4>
-                    {{#each properties.unis}}
-                    <h5 class="media-heading">uni port:<span class="label label-primary">{{id}} </span></h5>
-                    <h5 class="media-heading">Class of Service Configurations:</h5>
-                    {{#each cosCfg}}
-                    <h5 class="media-heading">classOfServiceName:<span class="label label-primary">{{classOfServiceName}} </span></h5>
-                    <h5 class="media-heading">ingressCir:<span class="label label-primary">{{ingressCir}} Mbps</span></h5>
-                    {{/each}} {{/each}}
+                    <p class="small">DeviceId:{{serviceInstance.properties.device}}</p>
+                    <p class="bg-warning">TODO: Fetch Hostname and IP</p>
                   </div>
-                </td>
-                <td class="col-sm-8 col-md-6">
-                  <div class="media-body">
-                    <h5 class="media-heading"> <span class="media-heading"> Created in BP: {{#unless discovered}}
-                                    <span class="label label-success">Yes </span> {{else}}
-                      <span class="label label-danger">No </span> {{/unless}}
-                      </span>
-                    </h5>
-                    <h5 class="media-heading"> <span class="media-heading"> Orch State:
-                                    {{#if orchStateIs "failed"}}
-                                    <span class="label label-danger">{{orchState}} </span> {{else}}
-                      <span class="label label-success">{{orchState}} </span> {{/if}}
-                      </span>
-                    </h5>
-                    {{#if orchStateIs "failed"}}
-                    <h5 class="media-heading"> <span class="media-heading"> reason: {{reason}}</span></h5>
-                    {{/if}}
-                  </div>
-                </td>
-                <td>
-                  <button type="button" class="btn btn-danger endpoint-remove">Remove</button>
-                </td>
-              </tr>
-              {{/each}}
-            </tbody>
-          </table>
+                </div>
+              </div>
+
+
+              
+              <div class="row col-md-4">
+                <div class="row">
+                  <h3>
+                    UNIs
+                  </h3>
+                  {{#each uni in serviceInstance.properties.unis}}
+                  <div class="form-inline">
+                    <label for="uniid" class="text-primary control-label">Port</label>
+                    <input name="uniid" id="uniid" class="form-control input-sm " value="{{uni.id}}" disabled>
+                  </div>                  
+                  <h4 class="media-heading">Class of Service Configurations:</h4>
+                  
+                  {{#each cosCfg in uni.cosCfg}}
+                    <div class="form-inline">
+                        <label for="{{cosCfg.classOfServiceName}}" class="text-primary control-label">{{cosCfg.classOfServiceName}}</label>
+                        <input id="{{cosCfg.classOfServiceName}}" class="form-control input-sm" value="{{cosCfg.ingressCir}}" disabled>
+                        <p class="bg-warning">TODO: Allow BW modification</p>
+                    </div>
+
+                  {{/each}} 
+                  {{/each}}
+                </div>
+              </div>
+
+
+
+              <div class="row col-md-4">
+                <div class="row">
+                  <h3>
+                    INNIs
+                  </h3>
+                  {{#each inni in serviceInstance.properties.innis}}
+                <div class="form-inline">
+								<label for="inniid" class="text-primary control-label">Port</label>
+								<input name="inniid" id="inniid" class="form-control input-sm " value="{{inni.id}}" disabled>
+                </div>
+                <div class="form-inline">
+								<label for="innistag" class="text-primary control-label">Core VLAN</label>
+								<input name="innistag" id="innistag" class="form-control input-sm " value="{{inni.stag}}" disabled>
+                </div>
+                  {{/each}}
+                </div>
+              </div>
+                <button type="button" id="{{endpointIndex}}" class="btn btn-danger endpoint-remove">Remove</button>
+            </form>
+          </div>
+          {{/let}} {{/each}}
         </div>
       </div>
     </div>
   </div>
+
 </template>
