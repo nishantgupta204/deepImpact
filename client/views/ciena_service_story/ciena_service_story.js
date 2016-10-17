@@ -290,6 +290,7 @@
 
   Template.CienaServiceStoryHeader.created = function () {
     Session.set('deviceList', {});
+    $('[data-toggle="tooltip"]').tooltip(); 
 
     Meteor.call("mdso_getDevices", "raciena6x.resourceTypes.DeviceDetail", function (error, result) {
       if (result) {
@@ -329,12 +330,58 @@
     'click #cancelButton': function (e, t) {
       Session.set("serviceStory", {});
     },
+    // 'click .service-get-commands': function(e,t){
+    //     var myTimer = function(){
+    //       alert('wtf')
+    //     }
+    //     Meteor.setTimeout(myTimer, 1000); // check again in a second
+    // },
+    'click .service-get-commands': function(e,t){
+      var localServiceStory = Session.get("serviceStory")
+      var times = 0
+      // var getCommands = function(cindex){
+      //   Meteor.call("mdso_getCienaServiceCommands", localServiceStory.endpoints[cindex].bpo, function (error, result) {
+
+      //   })
+      // }
+      // var getResource = function(rindex){
+
+      // }
+      for (index = 0; index < localServiceStory.endpoints.length; ++index) {
+        // localServiceStory.endpoints[index].commands = "a"
+        (function(index){
+        Meteor.call("mdso_getCienaServiceCommands", localServiceStory.endpoints[index].bpo, function (error, result) {
+          var commandsId = result.data.id
+          var getResource = function(resourceIndex){
+            Meteor.call("mdso_getResourceById", commandsId, function (error, result) {
+              // console.log(result)
+              if (result.properties.result.commands){
+                // console.log(result.properties.result.commands)
+                // console.log(localServiceStory.endpoints[resourceIndex])
+                localServiceStory.endpoints[resourceIndex].commands = []
+                localServiceStory.endpoints[resourceIndex].commands = result.properties.result.commands
+                Session.set('serviceStory', localServiceStory);
+              }
+              else {
+                times++
+                if (times < 5){
+                  setTimeout(function(){getResource(resourceIndex)}, 1000); // check again in a second
+                } else{
+                  localServiceStory.endpoints[resourceIndex].commands = ["error retriving commands"]
+                }
+              }
+            })
+          }
+          getResource(index)
+        })
+        })(index);
+      }
+    },
     'click .service-save': function (e, t) {
       var localServiceStory = Session.get("serviceStory")
       for (index = 0; index < localServiceStory.endpoints.length; ++index) {
-        localServiceStory.endpoints[index].ui.result = true
+        // localServiceStory.endpoints[index].ui.result = true
         Meteor.call("mdso_createCienaService", localServiceStory.endpoints[index].bpo, function (error, result) {
-          console.log(result)
         })
       }
       Session.set('serviceStory', localServiceStory);

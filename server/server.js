@@ -105,11 +105,6 @@ Meteor.methods({
 			throw new Meteor.Error("Error deleting service id:" + service.id + " error: " + e);
 		}
     },
-	'mdso_getCommands': function (service){
-
-
-
-	},
 	'mdso_postResource' :function(domain, product, body){
 		var tenantId =  Meteor.call("mdso_getDomain", domain);
 		console.log("Successfully retrieved tenantID:" + tenantId.id);
@@ -134,7 +129,7 @@ Meteor.methods({
 					data : body
 				});
 			console.log("Created resource " + response.data.id);
-			return {"created":"true"}
+			return response
 		} catch (e) {
 			var errorResponse = "Error creating resource for MDSO domain: " + domain + " error: " + e
 			console.log(errorResponse);
@@ -276,6 +271,13 @@ Meteor.methods({
 			console.log("Error getting id for MDSO domain: " + domain + " error: " + e);
 			throw new Meteor.Error("Error getting id for MDSO domain: " + domain + " error: " + e);
 		}
+	},
+	'mdso_getCienaServiceCommands': function(service){
+		console.log("Getting commands Ciena Service for:" + service);		
+		var devsplit = service.properties.device.split("_");
+		service.properties.device = devsplit[2]
+		result = Meteor.call("mdso_postResource", "Ciena6x", "raciena6x.resourceTypes.XvcCommands", service)
+		return result
 	},
 	'mdso_createCienaService': function(service){
 		console.log("Creating Ciena Service for:" + service);		
@@ -440,7 +442,5 @@ Meteor.methods({
 			console.log("Error getting resource with id: " + id);
 			throw new Meteor.Error("Error getting resource with id: " + id + " error: " + e);
 		}
-			return resource;
 	},
-
 });

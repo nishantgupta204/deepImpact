@@ -36,10 +36,6 @@ Template.CienaServiceDetail.created = function () {
     Meteor.call("mdso_getResourcesByResourceTypeId", "raciena6x.resourceTypes.XvcFragment", "&q=label:" + localserviceID.label, function (error, result) {
       if (result) {
         Session.set('service', result);
-        if (result.length == 0){
-          Session.set('service', {});
-          Router.go('ciena_services', {});
-        }
       }
     });
   }, 5000);
