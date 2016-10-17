@@ -361,13 +361,15 @@
                 localServiceStory.endpoints[resourceIndex].commands = []
                 localServiceStory.endpoints[resourceIndex].commands = result.properties.result.commands
                 Session.set('serviceStory', localServiceStory);
+                Meteor.call('mdso_deleteDevice',commandsId, function (error, result) {})
               }
               else {
                 times++
                 if (times < 5){
                   setTimeout(function(){getResource(resourceIndex)}, 1000); // check again in a second
                 } else{
-                  localServiceStory.endpoints[resourceIndex].commands = ["error retriving commands"]
+                  localServiceStory.endpoints[resourceIndex].commands = ["Error retriving commands. XvcCommands object should be deleted."]
+                  Session.set('serviceStory', localServiceStory);
                 }
               }
             })
