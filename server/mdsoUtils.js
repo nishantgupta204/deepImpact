@@ -1,6 +1,6 @@
 mdso_getHash = function (method, path) {
   import { Random } from 'meteor/random'
-  var appSettings = mdso_serverSettings()
+  var appSettings = Meteor.settings
   var port = 443;
   var api_key_id = appSettings.MDSO_keyID;
   var api_secret = appSettings.MDSO_keySecret;

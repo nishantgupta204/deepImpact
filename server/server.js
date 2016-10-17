@@ -38,7 +38,7 @@ Meteor.methods({
 	'mdso_setHostnameDevices': function(hostname){
 		console.log("Patching DeviceDetail:" + hostname.id + " to static assignment " + hostname.properties.staticIP + " " + hostname.properties.hostname );
         var path = "/bpocore/market/api/v1/resources/" + hostname.id
-        var appSettings = mdso_serverSettings();
+        var appSettings = Meteor.settings;
         var url = appSettings.MDSO_server + path
 		
 		var authToken = mdso_getHash("PATCH", path);
@@ -71,7 +71,7 @@ Meteor.methods({
 	},	
     'mdso_removeEndpoint': function(service){
         var path = "/bpocore/market/api/v1/resources/" + service.id
-        var appSettings = mdso_serverSettings();
+        var appSettings = Meteor.settings;
         var url = appSettings.MDSO_server + path
         if (service.discovered) {
             console.log("Patching service ID: " + service.id);
@@ -111,7 +111,7 @@ Meteor.methods({
 		console.log("Successfully retrieved productId:" + productId.id);
 
 		var path = "/bpocore/market/api/v1/resources"
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("POST", path);
 		var url = appSettings.MDSO_server + path
 		if (!body.label){
@@ -145,7 +145,7 @@ Meteor.methods({
 		service.discovered = false
 		console.log("service: " + JSON.stringify(service))
 		var path = "/bpocore/market/api/v1/resources"
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("POST", path);
 		var url = appSettings.MDSO_server + path
 
@@ -178,7 +178,7 @@ Meteor.methods({
 		console.log("Successfully retrieved productDeviceId:" + productDeviceId);
 
 		var path = "/bpocore/market/api/v1/resources"
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("POST", path);
 		var url = appSettings.MDSO_server + path
 
@@ -212,7 +212,7 @@ Meteor.methods({
 		console.log("Successfully retrieved productDeviceId:" + productDeviceId);
 
 		var path = "/bpocore/market/api/v1/resources"
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("POST", path);
 		var url = appSettings.MDSO_server + path
 
@@ -234,7 +234,7 @@ Meteor.methods({
     'mdso_deleteDevice':function (id) {
 		console.log("Deleting device with ID: " + id);
 		var path = "/bpocore/market/api/v1/resources/" + id
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("DELETE", path);
 		var url = appSettings.MDSO_server + path
 		try {
@@ -253,7 +253,7 @@ Meteor.methods({
 	'mdso_getDomain': function (domain) {
 		console.log("Getting info for MDSO Domain: " + domain);
 		var path = "/bpocore/market/api/v1/domains?q=domainType:urn:ciena:bp:domain:" + domain
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
 		try {
@@ -292,7 +292,7 @@ Meteor.methods({
 		console.log("Successfully retrieved productId:" + productId);
 		var res = hostname.split("_");
 		var path = "/bpocore/market/api/v1/resources?productId=" + productId + "&q=properties.device:" + res[2]
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
 		try {
@@ -328,7 +328,7 @@ Meteor.methods({
 	'mdso_getProductID': function(product){
 	    console.log("Getting Product ID for product:" + product);
 		var path = "/bpocore/market/api/v1/products?includeInactive=false&q=resourceTypeId:" + product
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
 		try {
@@ -353,7 +353,7 @@ Meteor.methods({
 		}else{
 			var path = "/bpocore/market/api/v1/resources?resourceTypeId=" + resourceTypeId
 		}
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
 		try {
@@ -378,7 +378,7 @@ Meteor.methods({
 		}else{
 			var path = "/bpocore/market/api/v1/resources?productId=" + product
 		}
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
 		try {
@@ -427,7 +427,7 @@ Meteor.methods({
 	'mdso_getResourceById': function(id){
 		console.log("Getting Resource with id:" + id);
 		var path = "/bpocore/market/api/v1/resources/" + id;
-		var appSettings = mdso_serverSettings();
+		var appSettings = Meteor.settings;
 		var authToken = mdso_getHash("GET", path);
 		var url = appSettings.MDSO_server + path
 		try {
