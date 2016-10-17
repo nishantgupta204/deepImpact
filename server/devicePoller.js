@@ -1,4 +1,4 @@
-Meteor.setInterval(function(){
-  var appSettings = AppSettings.findOne();
+// Meteor.setInterval(function(){
+//   var appSettings = AppSettings.findOne();
 
-}, 10000);
+// }, 10000);

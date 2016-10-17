@@ -23,3 +23,12 @@ meteor
 ## View
 
 http://localhost:3000
+
+
+## Dockerize
+
+```bash
+meteor build --architecture=os.linux.x86_64 ../deepImact-build
+cd ../deepImact-build && tar -zxvf deepImact.tar.gz && cd bundle
+
+```

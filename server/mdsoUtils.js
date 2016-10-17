@@ -1,6 +1,6 @@
 mdso_getHash = function (method, path) {
   import { Random } from 'meteor/random'
-  var appSettings = AppSettings.findOne();
+  var appSettings = mdso_serverSettings()
   var port = 443;
   var api_key_id = appSettings.MDSO_keyID;
   var api_secret = appSettings.MDSO_keySecret;
@@ -15,6 +15,21 @@ mdso_getHash = function (method, path) {
 
   var header = "MAC id=\"" + api_key_id + "\", ts=\"" + timestamp + "\", nonce=\"" + nonce + "\", mac=\"" + base64 + "\"";
   return header;
+};
+
+mdso_serverSettings = function(){
+  var settings = {
+      // "MDSO_server" : "https://10.206.31.150",
+      // Devops toolkit setting
+      "MDSO_server" : "http://localhost:9980",
+      "MDSO_user"   : "admin",
+      "MDSO_pass"   : "adminpw",
+      
+      // Obtain key from UAC in BP Server
+      "MDSO_keyID"  : "27a0a900eb3262010d83bc08b39106c90a597cfe",
+      "MDSO_keySecret": "3ded42036374bd69853d957cc84cbf09fa37bb46"
+  };
+  return settings
 };
 
 mdso_getAuthToken = function (appSettings) {
