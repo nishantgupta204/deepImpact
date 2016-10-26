@@ -18,7 +18,7 @@
     "classOfServiceName": "NonCritical",
     "ingressCir": 0
   }, ]
-  var bws = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+  var bws = ["", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
   Template.CienaServiceStory.rendered = function () {
     Session.set('serviceStory', {
       "cosId": "EVC"
@@ -379,7 +379,7 @@
         })(index);
       }
     },
-    'click .service-save': function (e, t) {
+    'submit form': function(event, template) {
       var localServiceStory = Session.get("serviceStory")
       for (index = 0; index < localServiceStory.endpoints.length; ++index) {
         // localServiceStory.endpoints[index].ui.result = true
@@ -389,7 +389,7 @@
       Session.set('serviceStory', localServiceStory);
       Session.set('serviceID',{"label":Session.get('serviceStory').endpoints[0].bpo.label});
 			Router.go('ciena_service_detail', {id : Session.get('serviceStory').endpoints[0].bpo.label});
-    },
+    },    
     'click .device-add': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.push(

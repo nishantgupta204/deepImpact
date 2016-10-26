@@ -281,8 +281,8 @@
 	</div>
 </template>
 
-
 <template name="CienaServiceStoryHeader">
+	<form role="form" data-toggle="validator">
 	<div class="panel panel-info">
 		<div id="panelTitle" class="panel-heading form-group" style="overflow: hidden;">
 			<h3>General Information requirements</h3>
@@ -291,15 +291,14 @@
 		<div class="panel panel-body text-center">
 			<div class="col-md-12">
 				<div class="panel-body">
-					<form id="createServiceForm" role="form" data-toggle="validator">
 						<div class="col-md-3 form-group">
 							<label for="customerName" class="text-primary control-label">Customer ID</label>
-							<input name="customerName" id="customerName" required class="form-control input-sm" value="">
+							<input name="customerName" id="customerName" pattern="[A-Za-z]{4}" title="4 letter Customer code" required class="form-control input-sm" value="">
 							<div class="help-block with-errors"></div>
 						</div>
 						<div class="col-md-3 form-group">
 							<label for="serviceName" class="text-primary control-label">Service Name</label>
-							<input name="serviceName" id="serviceName" required class="form-control input-sm" value="{{serviceStory.evcID}}">
+							<input type="text" name="serviceName" pattern="[A-Za-z0-9]+" id="serviceName" required class="form-control input-sm" value="{{serviceStory.evcID}}" title="A-Za-z0-9">
 							<div class="help-block with-errors"></div>
 						</div>
 						{{#if $eq serviceStory.type "CE"}}
@@ -319,15 +318,14 @@
 							<tr>
 								<label class="text-primary">Class of Service Config</label>
 							</tr>
-							<form class="form-inline">
-								<div class="form-group">
+								<div class="form-group form-inline">
 									{{#if $eq serviceStory.cosId "EVC"}}
 									<select id="classOfServiceName" class="form-control input-sm">
 										{{#each mcosCfg in mcosCfgs}}
 										<option value="{{mcosCfg.classOfServiceName}}">{{mcosCfg.classOfServiceName}}</option>
 										{{/each}}
 									</select>
-									<select id="ingressCir" class="form-control input-sm">
+									<select required id="ingressCir" class="form-control input-sm">
 										{{#each bw in bws}}
 										<option value="{{bw}}">{{bw}}</option>
 										{{/each}}
@@ -345,15 +343,8 @@
 									{{/each}} 
 									{{/if}}
 								</div>
-							</form>
 						</div>
 						{{/unless}}
-
-
-
-
-
-					</form>
 				</div>
 			</div>
 		</div>
@@ -366,13 +357,12 @@
 				{{#each endpoint in serviceStory.endpoints}} {{#let endpointIndex=@index}}
 
 				<div class="row row-bordered">
-					<form id="endpoints" role="form" data-toggle="validator">
 						<div class="col-md-2">
 							<h3>
 								Device
 							</h3>
 							<div class="media-body">
-								<select id="{{endpointIndex}}" class="form-control input-sm device-id" default="">
+								<select required id="{{endpointIndex}}" class="form-control input-sm device-id" default="">
 									<option disabled selected="null">Select an endpoint</option>
 									{{#each device in deviceList}}
 									<option value="{{device.properties.device}}">{{device.properties.hostname}}</option>
@@ -446,7 +436,6 @@
 									Class of Service Config
 								</h3>
 								{{#each cosCfg in cosCfg}}
-								<!--TODO: CosCfg for eLAN-->
 								{{/each}}
 							</div>
 							{{/if}} {{/each}}
@@ -468,27 +457,12 @@
 
 							<div class="media-body">
 								<label for="stag" class="text-primary control-label">Core VLAN</label>
-								<input name="stag" required id="{{endpointIndex}}" class="form-control input-sm stag-id" value="">
+								<input required pattern="[0-9]+" name="stag" id="{{endpointIndex}}" class="form-control input-sm stag-id" value="">
 								<div class="help-block with-errors"></div>
 							</div>
 							{{/each}}
 						</div>
-						<!--<div class="col-md-1">
-							{{#each inni in endpoint.bpo.properties.innis}}
-							<div class="text-center">
-							<h4 id="component-title">
-								result
-							</h4>
-							</div>
-							<div class="text-center">
-							<button id= "result{{endpointIndex}}" type="button" class="btn btn-{{#if endpoint.ui.result}}success{{else}}default{{/if}} disabled" aria-label="Left Align">
-							{{#unless endpoint.ui.result}}...{{/unless}}
-							<span class="glyphicon {{#if endpoint.ui.result}}glyphicon-ok{{/if}}" aria-hidden="true"></span>
-							</button>
-							</div>
-							{{/each}}
-						</div>-->
-					</form>
+
 				</div>
 				{{/let}} {{/each}}
 			</div>
@@ -497,10 +471,10 @@
 				<button type="button" class="btn btn-success device-add">New</button>
 			</tr>
 			{{/if}}
-
 		</div>
+		
 		<div class="text-center">
-			<button type="button" class="btn btn-lg btn-success service-save">Activate!</button>
+			<input type="submit" class="btn btn-lg btn-success service-save">
 			<button type="button" data-toggle="tooltip" title="Preview the commands prior to activation" class="btn btn-lg btn-success service-get-commands">Get commands</button>
 
 		</div>
@@ -532,5 +506,6 @@
 		</div>
 			{{/each}}
 		</div>
-	</div>
+  </div>
+</form>
 </template>

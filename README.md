@@ -29,13 +29,16 @@ http://localhost:3000
 ```bash
 meteor build --architecture=os.linux.x86_64 ../deepImpact-build --directory
 cp Dockerfile ../deepImpact-build/bundle && cd ../deepImpact-build/bundle
-docker build -t dockerreg.cyanoptics.com/cyan/deepimpact .
+docker build -t artifactory.ciena.com/blueplanet/deepimpact .
 ```
+
+
+
 ### Docker run
 
 Note: the MDSO_server is the ip of Blue Planet
 
 ```bash
-docker run --name deepimpact -d -p 3080:80 -e METEOR_SETTINGS={\"MDSO_server\":\"http://10.0.2.15:9980\"\,\"MDSO_keyID\":\"27a0a900eb3262010d83bc08b39106c90a597cfe\"\,\"MDSO_keySecret\":\"3ded42036374bd69853d957cc84cbf09fa37bb46\"} -e ROOT_URL=http://example.com -e MONGO_URL=localhost  dockerreg.cyanoptics.com/cyan/deepimpact 
+docker run --name deepimpact -d -p 3080:80 -e METEOR_SETTINGS={\"MDSO_server\":\"http://10.0.2.15:9980\"\,\"MDSO_keyID\":\"27a0a900eb3262010d83bc08b39106c90a597cfe\"\,\"MDSO_keySecret\":\"3ded42036374bd69853d957cc84cbf09fa37bb46\"} -e ROOT_URL=http://example.com -e MONGO_URL=localhost  artifactory.ciena.com/blueplanet/deepimpact 
 ```
 
