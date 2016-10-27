@@ -26,15 +26,13 @@ http://localhost:3000
 
 ## Dockerize
 
-```bash
-meteor build --architecture=os.linux.x86_64 ../deepImpact-build --directory
-cp Dockerfile ../deepImpact-build/bundle && cd ../deepImpact-build/bundle
-docker build -t artifactory.ciena.com/blueplanet/deepimpact .
-```
+`make image`
+
+To push this image to a production server:
+`make push`
 
 
-
-### Docker run
+### Docker run (on production server)
 
 Note: the MDSO_server is the ip of Blue Planet
 
