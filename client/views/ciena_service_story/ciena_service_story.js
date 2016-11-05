@@ -263,15 +263,6 @@
     },
     'click .bundlingEVP': function (e, t) {
       var localServiceStory = Session.get("serviceStory")
-      if (localServiceStory.topo == "eline") {
-        localServiceStory.evcID = "EVPxxxxx"
-      }
-      if (localServiceStory.topo == "elan") {
-        localServiceStory.evcID = "EVNxxxxx"
-      }
-      if (localServiceStory.topo == "eaccess") {
-        localServiceStory.evcID = "AVPxxxx"
-      }
       localServiceStory.endpoints.forEach(function (endpoint) {
       if (endpoint.bpo.properties.unis) {
         endpoint.bpo.properties.unis.forEach(function (uni) {
@@ -380,15 +371,18 @@
       }
     },
     'submit form': function(event, template) {
+      event.preventDefault();
       var localServiceStory = Session.get("serviceStory")
+      var services = []
+
       for (index = 0; index < localServiceStory.endpoints.length; ++index) {
-        // localServiceStory.endpoints[index].ui.result = true
-        Meteor.call("mdso_createCienaService", localServiceStory.endpoints[index].bpo, function (error, result) {
-        })
+        services.push(localServiceStory.endpoints[index].bpo)
       }
-      Session.set('serviceStory', localServiceStory);
-      Session.set('serviceID',{"label":Session.get('serviceStory').endpoints[0].bpo.label});
-			Router.go('ciena_service_detail', {id : Session.get('serviceStory').endpoints[0].bpo.label});
+      console.log(services)
+      Meteor.call("mdso_createCienaServices", services, function (error, result) {
+        Session.set('serviceID',{"label":Session.get('serviceStory').endpoints[0].bpo.label});
+			  Router.go('ciena_service_detail', {id : Session.get('serviceStory').endpoints[0].bpo.label});
+      })
     },    
     'click .device-add': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
@@ -467,7 +461,7 @@
     },
     'input .ctag-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.unis[0].ceVlanMap.vlans = event.currentTarget.value
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.unis[0].ceVlanMap.vlans = [event.currentTarget.value]
       Session.set('serviceStory', localServiceStory);
     },
     'input .device-id': function (event, template) {
@@ -487,6 +481,9 @@
     'input .stag-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints[event.currentTarget.id].bpo.properties.innis[0].stag = parseInt(event.currentTarget.value)
+      if(localServiceStory.endpoints[event.currentTarget.id].bpo.properties.ennis){
+        localServiceStory.endpoints[event.currentTarget.id].bpo.properties.ennis[0].stag = parseInt(event.currentTarget.value)
+      }
       Session.set('serviceStory', localServiceStory);
     },
     'input .inni-id': function (event, template) {

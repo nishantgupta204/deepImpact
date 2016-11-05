@@ -68,7 +68,12 @@ Meteor.methods({
     	var productID = Meteor.call("mdso_getProductID", device)
     	var devices = Meteor.call("mdso_getProducts", productID.id,"&q=properties.dhcpClient:true")
     	return devices
-	},	
+	},
+	'mdso_DeviceDetailByIP': function(device){
+    	var productID = Meteor.call("mdso_getProductID", "raciena6x.resourceTypes.DeviceDetail")
+    	var devices = Meteor.call("mdso_getProducts", productID.id,"&q=properties.staticIP:"+device)
+    	return devices
+	},
     'mdso_removeEndpoint': function(service){
         var path = "/bpocore/market/api/v1/resources/" + service.id
         var appSettings = Meteor.settings;
@@ -278,7 +283,14 @@ Meteor.methods({
 		result = Meteor.call("mdso_postResource", "Ciena6x", "raciena6x.resourceTypes.XvcCommands", service)
 		return result
 	},
-	'mdso_createCienaService': function(service){
+	'mdso_createCienaServices': function(services){
+		results = []
+		for(let service of services) {
+			result = Meteor.call("mdso_createCienaService", service)
+			results.push(result)
+		}
+		return results
+	},	'mdso_createCienaService': function(service){
 		console.log("Creating Ciena Service for:" + service);		
 		var devsplit = service.properties.device.split("_");
 		service.properties.device = devsplit[2]

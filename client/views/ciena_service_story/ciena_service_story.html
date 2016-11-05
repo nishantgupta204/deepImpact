@@ -302,6 +302,7 @@
 							<div class="help-block with-errors"></div>
 						</div>
 						{{#if $eq serviceStory.type "CE"}}
+						{{#unless $eq serviceStory.pipe "true"}}
 						<div class="col-md-3 form-group">
 							<label for="cosID" class="text-primary">Class of Service Identifier</label>
 							<select id="cosID" class="form-control input-sm cos-id">
@@ -310,6 +311,7 @@
 									<option value="DSCP">DSCP - MCOS</option>
 								</select>
 						</div>
+						{{/unless}}
 						{{/if}} 
 						{{#unless $eq serviceStory.topo "elan"}}
 
@@ -318,18 +320,19 @@
 							<tr>
 								<label class="text-primary">Class of Service Config</label>
 							</tr>
-								<div class="form-group form-inline">
-									{{#if $eq serviceStory.cosId "EVC"}}
-									<select id="classOfServiceName" class="form-control input-sm">
-										{{#each mcosCfg in mcosCfgs}}
-										<option value="{{mcosCfg.classOfServiceName}}">{{mcosCfg.classOfServiceName}}</option>
-										{{/each}}
-									</select>
-									<select required id="ingressCir" class="form-control input-sm">
-										{{#each bw in bws}}
-										<option value="{{bw}}">{{bw}}</option>
-										{{/each}}
-									</select> {{else}} 
+							<div class="form-group form-inline">
+								{{#if $eq serviceStory.cosId "EVC"}}
+								<select id="classOfServiceName" disabled="{{#if $eq serviceStory.pipe "true"}}disabled{{/if}}" class="form-control input-sm">
+									{{#each mcosCfg in mcosCfgs}} 
+									<option value="{{mcosCfg.classOfServiceName}}">{{mcosCfg.classOfServiceName}}</option>
+									{{/each}}
+								</select>
+								<select required id="ingressCir" class="form-control input-sm">
+									{{#each bw in bws}}
+									<option value="{{bw}}">{{bw}}</option>
+									{{/each}}
+								</select> 
+								{{else}} 
 									{{#each cosCfg in serviceStory.cosCfg}}
 									<tr>
 										<label for="{{cosCfg.classOfServiceName}}" class="text-primary control-label">{{cosCfg.classOfServiceName}}</label>
@@ -341,9 +344,25 @@
 									</tr>
 
 									{{/each}} 
-									{{/if}}
-								</div>
+								{{/if}}
+							</div>
 						</div>
+						{{#if $eq serviceStory.pipe "true"}}
+						<div class="col-md-3 text-center">
+							<tr>
+								<label class="text-primary">Agg Details</label>
+							</tr>
+							<div class="form-group form-inline">
+								<select id="aggDetails" class="form-control input-sm">
+									<option value="IP1">BRFA-WGTN</option>
+									<option value="IP2">BRFB-WGTN</option>
+									<option value="IP3">BRFC-WGTN</option>
+									<option value="IP4">BRFD-WGTN</option>
+								</select>
+							</div>
+						</div>							
+						{{/if}}
+
 						{{/unless}}
 				</div>
 			</div>
@@ -489,7 +508,7 @@
 					<pre id="bpo{{@index}}">{{stringify endpoint.bpo}}</pre>
 				</div>
 			</div>
-			<div class="col-md-5">
+			<div class="col-md-6">
 				<div class="row text-center">
 					<button data-clipboard-target="#commands{{@index}}" type="button" class="btn btn-sm btn-success">Copy Contents</button>
 				</div>				
@@ -498,11 +517,11 @@
 {{/each}}</textarea>
 				</div>
 			</div>
-			<div class="col-md-1 inline-block">
+			<!--<div class="col-md-1 inline-block">
 				<div class="text-center ">
 					<button id="{{@index}}" type="button" class="btn btn-sm btn-success btn-activate-device">Activate device!</button>
 				</div>				
-			</div>					
+			</div>					-->
 		</div>
 			{{/each}}
 		</div>
