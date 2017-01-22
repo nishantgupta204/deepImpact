@@ -404,11 +404,19 @@
 
       Session.set('serviceStory', localServiceStory);
     },    
+    'input #customerName': function (event, template) {
+      var localServiceStory = Session.get("serviceStory")
+      localServiceStory.endpoints.forEach(function (endpoint) {
+        endpoint.bpo.properties.customer = event.currentTarget.value
+      }, this);
+      Session.set('serviceStory', localServiceStory);
+
+    },
     'input #serviceName': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
       localServiceStory.endpoints.forEach(function (endpoint) {
         endpoint.bpo.label = event.currentTarget.value
-        endpoint.bpo.properties.id = event.currentTarget.value
+        endpoint.bpo.properties.serviceName = event.currentTarget.value
       }, this);
       Session.set('serviceStory', localServiceStory);
 
@@ -480,9 +488,9 @@
     },
     'input .stag-id': function (event, template) {
       var localServiceStory = Session.get("serviceStory")
-      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.innis[0].stag = parseInt(event.currentTarget.value)
+      localServiceStory.endpoints[event.currentTarget.id].bpo.properties.innis[0].vlan = parseInt(event.currentTarget.value)
       if(localServiceStory.endpoints[event.currentTarget.id].bpo.properties.ennis){
-        localServiceStory.endpoints[event.currentTarget.id].bpo.properties.ennis[0].stag = parseInt(event.currentTarget.value)
+        localServiceStory.endpoints[event.currentTarget.id].bpo.properties.ennis[0].vlan = parseInt(event.currentTarget.value)
       }
       Session.set('serviceStory', localServiceStory);
     },

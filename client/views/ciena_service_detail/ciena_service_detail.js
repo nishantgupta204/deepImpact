@@ -1,7 +1,7 @@
 Template.CienaServiceDetail.rendered = function () {
   Session.set('endpoints', {});
   Session.set('endpointsDetail', {});
-  
+
 };
 
 Template.CienaServiceDetail.helpers({
@@ -31,11 +31,16 @@ Template.CienaServiceDetailEndpoints.helpers({
   },
   'endpointsDetail': function () {
     return Session.get("endpointsDetail");
-  }  
+  }
 });
+var run_every_second;
+
+Template.CienaServiceDetailEndpoints.destroyed = function () {
+  Meteor.clearInterval(run_every_second);
+};
 
 Template.CienaServiceDetailEndpoints.created = function () {
-  var localserviceID = Session.get("serviceID") 
+  var localserviceID = Session.get("serviceID")
   Meteor.call("mdso_getResourcesByResourceTypeId", "raciena6x.resourceTypes.XvcFragment", "&q=label:" + localserviceID.label, function (error, result) {
     if (result) {
       Session.set('endpoints', result);
@@ -54,20 +59,20 @@ Template.CienaServiceDetailEndpoints.created = function () {
       }
     }
   });
-  Meteor.setInterval(() => {
-  var localserviceID = Session.get("serviceID")
-  var localEndpointsDetail = Session.get("endpointsDetail")
-  Meteor.call("mdso_getResourcesByResourceTypeId", "raciena6x.resourceTypes.XvcFragment", "&q=label:" + localserviceID.label, function (error, result) {
-    if (result) {
-      localEndpoint = result
-      localEndpoint.forEach(function(endpoint, i) {
-        endpoint.properties.ip = localEndpointsDetail[i].properties.ip
-        endpoint.properties.hostname = localEndpointsDetail[i].properties.hostname
-      }, this);
-      Session.set('endpoints', localEndpoint);
-    }
-  });
-  }, 5000);
+  run_every_second = Meteor.setInterval(() => {
+    var localserviceID = Session.get("serviceID")
+    var localEndpointsDetail = Session.get("endpointsDetail")
+    Meteor.call("mdso_getResourcesByResourceTypeId", "raciena6x.resourceTypes.XvcFragment", "&q=label:" + localserviceID.label, function (error, result) {
+      if (result) {
+        localEndpoint = result
+        localEndpoint.forEach(function (endpoint, i) {
+          endpoint.properties.ip = localEndpointsDetail[i].properties.ip
+          endpoint.properties.hostname = localEndpointsDetail[i].properties.hostname
+        }, this);
+        Session.set('endpoints', localEndpoint);
+      }
+    });
+  }, 1000);
 };
 
 Template.serviceDeleteConfirmModal.events({
