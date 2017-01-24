@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "clipboard": "^1.5.12",
+    "cola": "^0.1.7",
     "meteor-node-stubs": "~0.2.0"
   }
 }

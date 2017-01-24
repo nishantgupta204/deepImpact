@@ -84,6 +84,7 @@ spacebars-compiler@1.0.13
 spiderable@1.0.13
 standard-minifier-css@1.2.1
 standard-minifier-js@1.2.0_1
+tdj:cola@0.0.3
 templating@1.2.15
 templating-compiler@1.2.15
 templating-runtime@1.2.15

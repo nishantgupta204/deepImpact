@@ -1,5 +1,5 @@
 Template.CienaServices.rendered = function() {
-
+  Session.set('serviceID', "");
 };
 
 Template.CienaServices.created = function () {
